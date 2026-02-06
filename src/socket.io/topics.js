@@ -128,4 +128,52 @@ SocketTopics.getPostCountInTopic = async function (socket, tid) {
 	return await db.sortedSetScore(`tid:${tid}:posters`, socket.uid);
 };
 
+SocketTopics.getAnswered = async function (socket, tid) {
+	if (!tid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+
+	const canRead = await privileges.topics.can('topics:read', tid, socket.uid);
+	if (!canRead) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	const answered = await topics.getTopicField(tid, 'answered');
+	return parseInt(answered, 10) === 1;
+};
+
+SocketTopics.setAnswered = async function (socket, data) {
+	if (!socket.uid || !data || !data.tid || typeof data.answered === 'undefined') {
+		throw new Error('[[error:invalid-data]]');
+	}
+
+	const tid = data.tid;
+
+	// Must be able to read the topic
+	const canRead = await privileges.topics.can('topics:read', tid, socket.uid);
+	if (!canRead) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	// Permission: admin/mod OR topic owner
+	const [isAdminOrMod, topicOwnerUid] = await Promise.all([
+		privileges.topics.isAdminOrMod(tid, socket.uid),
+		topics.getTopicField(tid, 'uid'),
+	]);
+
+	const isOwner = parseInt(topicOwnerUid, 10) === parseInt(socket.uid, 10);
+	if (!isAdminOrMod && !isOwner) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	const newValue = data.answered ? 1 : 0;
+
+	await db.setObjectField(`topic:${tid}`, 'answered', newValue);
+
+	// Optional: return the updated value
+	return { tid, answered: !!newValue };
+};
+
+
+
 require('../promisify')(SocketTopics);
