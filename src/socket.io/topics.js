@@ -149,7 +149,7 @@ SocketTopics.setAnswered = async function (socket, data) {
 
 	const {tid,answered} = data;
 
-    //check reading privleges 
+	//check reading privleges 
 	const canRead = await privileges.topics.can('topics:read', tid, socket.uid);
 	if (!canRead) {
 		throw new Error('[[error:no-privileges]]');
@@ -166,11 +166,11 @@ SocketTopics.setAnswered = async function (socket, data) {
 		throw new Error('[[error:no-privileges]]');
 	}
 
-	const newValue = data.answered ? 1 : 0;
+	const newValue = answered ? 1 : 0;
 
 	await db.setObjectField(`topic:${tid}`, 'answered', newValue);
 
-    //return new value
+	//return new value
 	return { tid, answered: !!newValue };
 };
 
