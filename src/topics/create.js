@@ -252,9 +252,12 @@ module.exports = function (Topics) {
 
 	async function onNewPost({ pid, tid, uid: postOwner }, { uid, handle }) {
 		const [[postData], [userInfo]] = await Promise.all([
-			posts.getPostSummaryByPids([pid], uid, { extraFields: ['attachments'] }),
+			posts.getPostSummaryByPids([pid], uid, { extraFields: ['attachments', 'anonymous'] }),
 			posts.getUserInfoForPosts([postOwner], uid),
 		]);
+		if (postData.anonymous == null || postData.anonymous == undefined) {
+			delete postData.anonymous;
+		}
 		await Promise.all([
 			Topics.addParentPosts([postData], uid),
 			Topics.syncBacklinks(postData),
