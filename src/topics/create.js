@@ -37,7 +37,7 @@ module.exports = function (Topics) {
 			viewcount: 0,
 		};
 
-		if (data.anonymous != undefined) {
+		if (data.anonymous != undefined || data.anonymous != null) {
 			topicData.anonymous = data.anonymous;
 		}
 
