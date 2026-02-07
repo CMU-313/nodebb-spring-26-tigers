@@ -147,15 +147,15 @@ SocketTopics.setAnswered = async function (socket, data) {
 		throw new Error('[[error:invalid-data]]');
 	}
 
-	const tid = data.tid;
+	const {tid,answered} = data;
 
-	// Must be able to read the topic
+    //check reading privleges 
 	const canRead = await privileges.topics.can('topics:read', tid, socket.uid);
 	if (!canRead) {
 		throw new Error('[[error:no-privileges]]');
 	}
 
-	// Permission: admin/mod OR topic owner
+	// Permissions
 	const [isAdminOrMod, topicOwnerUid] = await Promise.all([
 		privileges.topics.isAdminOrMod(tid, socket.uid),
 		topics.getTopicField(tid, 'uid'),
@@ -170,7 +170,7 @@ SocketTopics.setAnswered = async function (socket, data) {
 
 	await db.setObjectField(`topic:${tid}`, 'answered', newValue);
 
-	// Optional: return the updated value
+    //return new value
 	return { tid, answered: !!newValue };
 };
 
