@@ -11,7 +11,8 @@ define('forum/category', [
 	'alerts',
 	'api',
 	'clipboard',
-], function (infinitescroll, share, navigator, topicList, sort, categorySelector, hooks, alerts, api, clipboard) {
+	'forum/category/search',
+], function (infinitescroll, share, navigator, topicList, sort, categorySelector, hooks, alerts, api, clipboard, categorySearch) {
 	const Category = {};
 
 	$(window).on('action:ajaxify.start', function (ev, data) {
@@ -52,6 +53,9 @@ define('forum/category', [
 		});
 
 		new clipboard('[data-clipboard-text]');
+
+		// initialize topic search box
+		categorySearch.init();
 
 		hooks.fire('action:topics.loaded', { topics: ajaxify.data.topics });
 		hooks.fire('action:category.loaded', { cid: ajaxify.data.cid });

@@ -38,6 +38,12 @@
 			<div class="d-flex gap-1 align-items-center">
 				{{{ if (template.category || template.world) }}}
 					{{{ if privileges.topics:create }}}
+					<div class="me-2 d-flex align-items-center">
+						<div class="input-group input-group-sm">
+							<input type="search" id="topic-search" class="form-control form-control-sm" placeholder="Search topics..." aria-label="Search topics" />
+							<span class="input-group-text"><i class="fa fa-search"></i></span>
+						</div>
+					</div>
 					<a href="{config.relative_path}/compose?cid={cid}" component="category/post" id="new_topic" class="btn btn-primary btn-sm text-nowrap" data-ajaxify="false" role="button">[[category:new-topic-button]]</a>
 					{{{ end }}}
 				{{{ else }}}
