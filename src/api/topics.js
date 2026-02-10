@@ -11,6 +11,7 @@ const batch = require('../batch');
 const activitypub = require('../activitypub');
 const utils = require('../utils');
 
+const db = require('../database');
 const apiHelpers = require('./helpers');
 
 const { doTopicAction } = apiHelpers;
@@ -161,30 +162,6 @@ topicsAPI.lock = async function (caller, data) {
 
 topicsAPI.unlock = async function (caller, data) {
 	await doTopicAction('unlock', 'event:topic_unlocked', caller, {
-		tids: data.tids,
-	});
-};
-
-topicsAPI.markAsQuestion = async function (caller, data) {
-	await doTopicAction('markAsQuestion', 'event:topic_marked_question', caller, {
-		tids: data.tids,
-	});
-};
-
-topicsAPI.unmarkAsQuestion = async function (caller, data) {
-	await doTopicAction('unmarkAsQuestion', 'event:topic_unmarked_question', caller, {
-		tids: data.tids,
-	});
-};
-
-topicsAPI.markAnswered = async function (caller, data) {
-	await doTopicAction('markAnswered', 'event:topic_answered', caller, {
-		tids: data.tids,
-	});
-};
-
-topicsAPI.markUnanswered = async function (caller, data) {
-	await doTopicAction('markUnanswered', 'event:topic_unanswered', caller, {
 		tids: data.tids,
 	});
 };
@@ -370,3 +347,67 @@ topicsAPI.move = async (caller, { tid, cid }) => {
 
 	await categories.onTopicsMoved(cids);
 };
+
+topicsAPI.getAnswered = async function (caller, { tid }) {
+	if (!tid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+
+	const [exists, canRead] = await Promise.all([
+		topics.exists(tid),
+		privileges.topics.can('topics:read', tid, caller.uid),
+	]);
+
+	if (!exists) {
+		throw new Error('[[error:no-topic]]');
+	}
+	if (!canRead) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	const answered = await topics.getTopicField(tid, 'answered');
+	return { tid, answered: parseInt(answered, 10) === 1 };
+};
+
+topicsAPI.setAnswered = async function (caller, { tid, answered }) {
+	if (!tid || typeof answered === 'undefined') {
+		throw new Error('[[error:invalid-data]]');
+	}
+
+	const topicData = await topics.getTopicFields(tid, ['tid', 'cid', 'uid']);
+	if (!topicData || !topicData.tid) {
+		throw new Error('[[error:no-topic]]');
+	}
+
+	// Must be able to read the topic
+	const canRead = await privileges.topics.can('topics:read', tid, caller.uid);
+	if (!canRead) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	// Decide who can set it
+	const isAdminOrMod = await privileges.topics.isAdminOrMod(tid, caller.uid);
+	const isOwner = parseInt(topicData.uid, 10) === parseInt(caller.uid, 10);
+	if (!isAdminOrMod && !isOwner) {
+		throw new Error('[[error:no-privileges]]');
+	}
+
+	const newValue = answered ? 1 : 0;
+
+	// Persist on topic hash
+	await db.setObjectField(`topic:${tid}`, 'answered', newValue);
+
+	// Notify online users who can read this category
+	const onlineUids = await user.getUidsFromSet('users:online', 0, -1);
+	const notifyUids = await privileges.categories.filterUids('topics:read', topicData.cid, onlineUids);
+
+	socketHelpers.emitToUids('event:topic_answered', {
+		tid: topicData.tid,
+		cid: topicData.cid,
+		answered: !!newValue,
+	}, notifyUids);
+
+	return { tid: topicData.tid, answered: !!newValue };
+};
+
+
