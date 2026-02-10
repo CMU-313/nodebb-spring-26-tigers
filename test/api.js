@@ -26,7 +26,6 @@ const messaging = require('../src/messaging');
 const activitypub = require('../src/activitypub');
 const utils = require('../src/utils');
 const api = require('../src/api');
-const passport = require('passport');
 
 describe('API', async () => {
 	let readApi = false;
