@@ -164,6 +164,10 @@ paths:
     $ref: 'write/topics/tid/events/eventId.yaml'
   /topics/{tid}/read:
     $ref: 'write/topics/tid/read.yaml'
+  /topics/{tid}/question:
+    $ref: 'write/topics/tid/question.yaml'
+  /topics/{tid}/answered:
+    $ref: 'write/topics/tid/answered.yaml'
   /topics/{tid}/bump:
     $ref: 'write/topics/tid/bump.yaml'
   /topics/{tid}/move:
@@ -202,6 +206,10 @@ paths:
     $ref: 'write/posts/pid/diffs/since.yaml'
   /posts/{pid}/diffs/{timestamp}:
     $ref: 'write/posts/pid/diffs/timestamp.yaml'
+  /posts/{pid}/question:
+    $ref: 'write/posts/pid/question.yaml'
+  /posts/{pid}/answered:
+    $ref: 'write/posts/pid/answered.yaml'
   /posts/{pid}/replies:
     $ref: 'write/posts/pid/replies.yaml'
   /posts/queue/{id}:
