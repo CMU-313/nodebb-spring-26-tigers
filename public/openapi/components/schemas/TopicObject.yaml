@@ -257,13 +257,16 @@ TopicObjectSlim:
         pinExpiryISO:
           type: string
           description: "`pinExpiry` rendered as an ISO 8601 format"
+        isQuestion:
+          type: number
+          description: Whether or not this topic is a question (0 or 1)
+        answered:
+          type: number
+          description: Whether or not this topic has been answered (0 or 1)
         upvotes:
           type: number
         downvotes:
           type: number
-        answered:
-          type: string
-          description: Whether the topic is marked as answered (0/1)
         votes:
           type: number
         teaserPid:

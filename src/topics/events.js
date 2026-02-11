@@ -45,6 +45,22 @@ Events._types = {
 		icon: 'fa-unlock',
 		translation: async (event, language) => translateSimple(event, language, 'topic:user-unlocked-topic'),
 	},
+	'mark-question': {
+		icon: 'fa-question-circle',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-marked-question'),
+	},
+	'unmark-question': {
+		icon: 'fa-minus-circle',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-unmarked-question'),
+	},
+	answered: {
+		icon: 'fa-check-circle',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-marked-answered'),
+	},
+	unanswered: {
+		icon: 'fa-times-circle',
+		translation: async (event, language) => translateSimple(event, language, 'topic:user-marked-unanswered'),
+	},
 	delete: {
 		icon: 'fa-trash',
 		translation: async (event, language) => translateSimple(event, language, 'topic:user-deleted-topic'),

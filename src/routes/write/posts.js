@@ -22,6 +22,12 @@ module.exports = function () {
 	setupApiRoute(router, 'put', '/:pid/state', middlewares, controllers.write.posts.restore);
 	setupApiRoute(router, 'delete', '/:pid/state', middlewares, controllers.write.posts.delete);
 
+	setupApiRoute(router, 'put', '/:pid/question', middlewares, controllers.write.posts.markAsQuestion);
+	setupApiRoute(router, 'delete', '/:pid/question', middlewares, controllers.write.posts.unmarkAsQuestion);
+
+	setupApiRoute(router, 'put', '/:pid/answered', middlewares, controllers.write.posts.markAnswered);
+	setupApiRoute(router, 'delete', '/:pid/answered', middlewares, controllers.write.posts.markUnanswered);
+
 	setupApiRoute(router, 'put', '/:pid/move', [...middlewares, middleware.checkRequired.bind(null, ['tid'])], controllers.write.posts.move);
 
 	setupApiRoute(router, 'put', '/:pid/vote', [...middlewares, middleware.checkRequired.bind(null, ['delta'])], controllers.write.posts.vote);

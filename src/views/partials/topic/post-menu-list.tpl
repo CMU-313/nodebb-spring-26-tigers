@@ -15,6 +15,31 @@
 		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-history"></i></span> [[topic:restore]]
 	</a>
 </li>
+
+<li {{{ if posts.isQuestion }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-question" role="menuitem" href="#" class="{{{ if posts.isQuestion }}}hidden{{{ end }}}">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-question-circle"></i></span> [[topic:post-mark-question]]
+	</a>
+</li>
+
+<li {{{ if !posts.isQuestion }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/unmark-question" role="menuitem" href="#" class="{{{ if !posts.isQuestion }}}hidden{{{ end }}}">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-minus-circle"></i></span> [[topic:post-unmark-question]]
+	</a>
+</li>
+
+<li {{{ if !posts.isQuestion }}}hidden{{{ end }}}{{{ if posts.answered }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-answered" role="menuitem" href="#" class="{{{ if !posts.isQuestion }}}hidden{{{ end }}}{{{ if posts.answered }}}hidden{{{ end }}}">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-check-circle"></i></span> [[topic:post-mark-answered]]
+	</a>
+</li>
+
+<li {{{ if !posts.answered }}}hidden{{{ end }}}>
+	<a class="dropdown-item rounded-1 d-flex align-items-center gap-2" component="post/mark-unanswered" role="menuitem" href="#" class="{{{ if !posts.answered }}}hidden{{{ end }}}">
+		<span class="menu-icon"><i class="fa fa-fw text-secondary fa-times-circle"></i></span> [[topic:post-mark-unanswered]]
+	</a>
+</li>
+
 {{{ end }}}
 {{{ if posts.display_purge_tools }}}
 <li {{{ if !posts.deleted }}}hidden{{{ end }}}>

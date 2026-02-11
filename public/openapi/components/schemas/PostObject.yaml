@@ -182,6 +182,12 @@ PostDataObject:
           type: number
         announces:
           type: number
+        isQuestion:
+          type: number
+          description: Whether or not the parent topic is a question (0 or 1)
+        answered:
+          type: number
+          description: Whether or not the parent topic has been answered (0 or 1)
         bookmarks:
           type: number
         deleterUid:

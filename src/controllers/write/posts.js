@@ -99,6 +99,26 @@ Posts.delete = async (req, res) => {
 	helpers.formatApiResponse(200, res);
 };
 
+Posts.markAsQuestion = async (req, res) => {
+	await api.posts.markAsQuestion(req, { pid: req.params.pid });
+	helpers.formatApiResponse(200, res);
+};
+
+Posts.unmarkAsQuestion = async (req, res) => {
+	await api.posts.unmarkAsQuestion(req, { pid: req.params.pid });
+	helpers.formatApiResponse(200, res);
+};
+
+Posts.markAnswered = async (req, res) => {
+	await api.posts.markAnswered(req, { pid: req.params.pid });
+	helpers.formatApiResponse(200, res);
+};
+
+Posts.markUnanswered = async (req, res) => {
+	await api.posts.markUnanswered(req, { pid: req.params.pid });
+	helpers.formatApiResponse(200, res);
+};
+
 Posts.move = async (req, res) => {
 	await api.posts.move(req, {
 		pid: req.params.pid,
