@@ -7,8 +7,9 @@ define('topicList', [
 	'categoryFilter',
 	'tagFilter',
 	'forum/category/tools',
+	'forum/category/search',
 	'hooks',
-], function (infinitescroll, handleBack, topicSelect, categoryFilter, tagFilter, categoryTools, hooks) {
+], function (infinitescroll, handleBack, topicSelect, categoryFilter, tagFilter, categoryTools, categorySearch, hooks) {
 	const TopicList = {};
 	let templateName = '';
 
@@ -32,6 +33,10 @@ define('topicList', [
 		loadTopicsCallback = cb || loadTopicsAfter;
 
 		categoryTools.init();
+
+		if (categorySearch && categorySearch.init) {
+			categorySearch.init();
+		}
 
 		TopicList.watchForNewPosts();
 		const states = ['watching', 'tracking'];

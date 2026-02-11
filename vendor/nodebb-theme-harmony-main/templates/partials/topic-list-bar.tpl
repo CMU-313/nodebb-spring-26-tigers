@@ -38,6 +38,11 @@
 			<div class="d-flex gap-1 align-items-center">
 				{{{ if (template.category || template.world) }}}
 					{{{ if privileges.topics:create }}}
+					<form action="{config.relative_path}/search" method="get" class="d-flex align-items-center gap-2 me-1" style="margin:0;">
+						<input name="term" type="search" class="form-control form-control-sm" placeholder="[[search:type-to-search]]" style="width:180px;" autocomplete="off" />
+						<input type="hidden" name="categories" value="{cid}" />
+						<button type="submit" class="btn btn-ghost btn-sm d-none d-md-inline"><i class="fa fa-search text-primary"></i></button>
+					</form>
 					<a href="{config.relative_path}/compose?cid={cid}" component="category/post" id="new_topic" class="btn btn-primary btn-sm text-nowrap" data-ajaxify="false" role="button">[[category:new-topic-button]]</a>
 					{{{ end }}}
 				{{{ else }}}
