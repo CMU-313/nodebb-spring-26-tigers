@@ -8,7 +8,7 @@
 	<form component="search/form" id="search-form" class="d-flex justify-content-end align-items-center" role="search" method="GET">
 		<div component="search/fields" class="w-100" id="search-fields">
 			<div class="d-flex gap-1">
-				<input autocomplete="off" type="text" class="form-control" placeholder="[[global:search]]" name="query" value="" aria-label="[[search:type-to-search]]">
+				<input autocomplete="off" type="text" class="form-control" placeholder="Search threads..." name="query" value="" aria-label="Type to search threads">
 
 				<a class="btn btn-ghost advanced-search-link p-2" href="{config.relative_path}/search" title="[[search:advanced-search]]">
 					<i class="fa fa-gears text-muted"></i>
