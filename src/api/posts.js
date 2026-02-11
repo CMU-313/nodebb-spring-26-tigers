@@ -186,6 +186,38 @@ postsAPI.restore = async function (caller, data) {
 	});
 };
 
+postsAPI.markAsQuestion = async function (caller, data) {
+	if (!data || !data.pid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+	const postData = await posts.tools.markAsQuestion(caller.uid, data.pid);
+	websockets.in(`topic_${postData.tid}`).emit('event:post_marked_question', postData);
+};
+
+postsAPI.unmarkAsQuestion = async function (caller, data) {
+	if (!data || !data.pid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+	const postData = await posts.tools.unmarkAsQuestion(caller.uid, data.pid);
+	websockets.in(`topic_${postData.tid}`).emit('event:post_unmarked_question', postData);
+};
+
+postsAPI.markAnswered = async function (caller, data) {
+	if (!data || !data.pid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+	const postData = await posts.tools.markAnswered(caller.uid, data.pid);
+	websockets.in(`topic_${postData.tid}`).emit('event:post_answered', postData);
+};
+
+postsAPI.markUnanswered = async function (caller, data) {
+	if (!data || !data.pid) {
+		throw new Error('[[error:invalid-data]]');
+	}
+	const postData = await posts.tools.markUnanswered(caller.uid, data.pid);
+	websockets.in(`topic_${postData.tid}`).emit('event:post_unanswered', postData);
+};
+
 async function deleteOrRestore(caller, data, params) {
 	if (!data || !data.pid) {
 		throw new Error('[[error:invalid-data]]');

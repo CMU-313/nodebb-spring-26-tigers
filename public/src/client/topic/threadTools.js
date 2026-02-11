@@ -61,6 +61,26 @@ define('forum/topic/threadTools', [
 			return false;
 		});
 
+		topicContainer.on('click', '[component="topic/mark-question"]', function () {
+			topicCommand('put', '/question', 'markAsQuestion');
+			return false;
+		});
+
+		topicContainer.on('click', '[component="topic/unmark-question"]', function () {
+			topicCommand('del', '/question', 'unmarkAsQuestion');
+			return false;
+		});
+
+		topicContainer.on('click', '[component="topic/mark-answered"]', function () {
+			topicCommand('put', '/answered', 'markAnswered');
+			return false;
+		});
+
+		topicContainer.on('click', '[component="topic/mark-unanswered"]', function () {
+			topicCommand('del', '/answered', 'markUnanswered');
+			return false;
+		});
+
 		topicContainer.on('click', '[component="topic/mark-unread"]', function () {
 			topicCommand('del', '/read', undefined, () => {
 				if (app.previousUrl && !app.previousUrl.match('^/topic')) {
@@ -390,6 +410,46 @@ define('forum/topic/threadTools', [
 			));
 		}
 		ajaxify.data.pinned = data.pinned;
+
+		posts.addTopicEvents(data.events);
+	};
+
+	ThreadTools.setQuestionState = function (data) {
+		const threadEl = components.get('topic');
+		if (String(data.tid) !== threadEl.attr('data-tid')) {
+			return;
+		}
+
+		components.get('topic/mark-question').toggleClass('hidden', data.isQuestion).parent().attr('hidden', data.isQuestion ? '' : null);
+		components.get('topic/unmark-question').toggleClass('hidden', !data.isQuestion).parent().attr('hidden', !data.isQuestion ? '' : null);
+
+		// When marking as not a question, also hide the answered options
+		if (!data.isQuestion) {
+			components.get('topic/mark-answered').toggleClass('hidden', true).parent().attr('hidden', '');
+			components.get('topic/mark-unanswered').toggleClass('hidden', true).parent().attr('hidden', '');
+			ajaxify.data.answered = 0;
+		} else {
+			// Show mark-answered button when marking as question (and not yet answered)
+			const isAnswered = ajaxify.data.answered || data.answered;
+			components.get('topic/mark-answered').toggleClass('hidden', !!isAnswered).parent().attr('hidden', isAnswered ? '' : null);
+			components.get('topic/mark-unanswered').toggleClass('hidden', !isAnswered).parent().attr('hidden', !isAnswered ? '' : null);
+		}
+
+		ajaxify.data.isQuestion = data.isQuestion;
+
+		posts.addTopicEvents(data.events);
+	};
+
+	ThreadTools.setAnsweredState = function (data) {
+		const threadEl = components.get('topic');
+		if (String(data.tid) !== threadEl.attr('data-tid')) {
+			return;
+		}
+
+		components.get('topic/mark-answered').toggleClass('hidden', data.answered).parent().attr('hidden', data.answered ? '' : null);
+		components.get('topic/mark-unanswered').toggleClass('hidden', !data.answered).parent().attr('hidden', !data.answered ? '' : null);
+
+		ajaxify.data.answered = data.answered;
 
 		posts.addTopicEvents(data.events);
 	};

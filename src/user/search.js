@@ -1,3 +1,4 @@
+
 'use strict';
 
 const _ = require('lodash');
@@ -24,69 +25,8 @@ module.exports = function (User) {
 		unverified: ['email:confirmed'],
 	};
 
-	function shouldSkipUidSearch(data) {
-		return !!(data.findUids || !data.uid);
-	}
-
-	function getRemoteIdentifier(queryStr) {
-		const handle = activitypub.helpers.isWebfinger(queryStr);
-		const isUri = activitypub.helpers.isUri(queryStr);
-
-		return {
-			handle,
-			remoteId: handle || (isUri ? queryStr : null),
-		};
-	}
-
-	function isValidLocalUserRef(local) {
-		return local?.type === 'user' && utils.isNumber(local.id);
-	}
-
-	async function resolveLocalUserUid(queryStr) {
-		const local = await activitypub.helpers.resolveLocalId(queryStr);
-		return isValidLocalUserRef(local) ? local.id : null;
-	}
-
-	async function resolveFromAssertion(ctx) {
-		const {User, handle, remoteId, fallbackUid} = ctx;
-
-		const assertion = await activitypub.actors.assert([remoteId]);
-
-		if (assertion === true) {
-			const uid = handle ? await User.getUidByUserslug(handle) : fallbackUid;
-			return [uid];
-		}
-
-		if (Array.isArray(assertion) && assertion.length) {
-			return assertion.map(u => u.id);
-		}
-
-		return [];
-	}
-
-	async function searchActivityPubUids(User, data, query) {
-		if (shouldSkipUidSearch(data)) return [];
-
-		const { handle, remoteId } = getRemoteIdentifier(data.query);
-		if (!remoteId) {
-			return [];
-		}
-
-		const localUid = await resolveLocalUserUid(data.query);
-		if (localUid !== null) {
-			return [localUid];
-		}
-
-		return resolveFromAssertion({
-			User,
-			handle,
-			remoteId,
-			fallbackUid: query,
-		});
-	}
 
 	User.search = async function (data) {
-		console.log('Searching');
 		const query = data.query || '';
 		const searchBy = data.searchBy || 'username';
 		const page = data.page || 1;
@@ -101,7 +41,22 @@ module.exports = function (User) {
 		} else if (searchBy === 'uid') {
 			uids = [query];
 		} else {
-			uids = await searchActivityPubUids(User,data,query);
+			if (!data.findUids && data.uid) {
+				const handle = activitypub.helpers.isWebfinger(data.query);
+				if (handle || activitypub.helpers.isUri(data.query)) {
+					const local = await activitypub.helpers.resolveLocalId(data.query);
+					if (local.type === 'user' && utils.isNumber(local.id)) {
+						uids = [local.id];
+					} else {
+						const assertion = await activitypub.actors.assert([handle || data.query]);
+						if (assertion === true) {
+							uids = [handle ? await User.getUidByUserslug(handle) : query];
+						} else if (Array.isArray(assertion) && assertion.length) {
+							uids = assertion.map(u => u.id);
+						}
+					}
+				}
+			}
 
 			if (!uids.length) {
 				const searchMethod = data.findUids || findUids;
@@ -156,8 +111,6 @@ module.exports = function (User) {
 		return searchResult;
 	};
 
-	
-
 	async function findUids(query, searchBy, hardCap) {
 		if (!query) {
 			return [];
@@ -166,8 +119,7 @@ module.exports = function (User) {
 		const min = query;
 		const max = query.substr(0, query.length - 1) + String.fromCharCode(query.charCodeAt(query.length - 1) + 1);
 
-		const resultsPerPage = meta.config.userSearchResultsPerPage;
-		hardCap = hardCap || resultsPerPage * 10;
+		hardCap = hardCap || 500;
 
 		const data = await db.getSortedSetRangeByLex(`${searchBy}:sorted`, min, max, 0, hardCap);
 		// const uids = data.map(data => data.split(':').pop());

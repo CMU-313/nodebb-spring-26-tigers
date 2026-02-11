@@ -261,9 +261,6 @@ TopicObjectSlim:
           type: number
         downvotes:
           type: number
-        answered:
-          type: string
-          description: Whether the topic is marked as answered (0/1)
         votes:
           type: number
         teaserPid:

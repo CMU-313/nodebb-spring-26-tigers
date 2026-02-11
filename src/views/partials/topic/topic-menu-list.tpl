@@ -7,6 +7,22 @@
 	<a component="topic/unlock" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !locked }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-unlock text-secondary"></i> [[topic:thread-tools.unlock]]</a>
 </li>
 
+<li {{{ if isQuestion }}}hidden{{{ end }}}>
+	<a component="topic/mark-question" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if isQuestion }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-question-circle text-secondary"></i> [[topic:thread-tools.mark-question]]</a>
+</li>
+
+<li {{{ if !isQuestion }}}hidden{{{ end }}}>
+	<a component="topic/unmark-question" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !isQuestion }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-minus-circle text-secondary"></i> [[topic:thread-tools.unmark-question]]</a>
+</li>
+
+<li {{{ if !isQuestion }}}hidden{{{ end }}}{{{ if answered }}}hidden{{{ end }}}>
+	<a component="topic/mark-answered" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !isQuestion }}}hidden{{{ end }}}{{{ if answered }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-check-circle text-secondary"></i> [[topic:thread-tools.mark-answered]]</a>
+</li>
+
+<li {{{ if !answered }}}hidden{{{ end }}}>
+	<a component="topic/mark-unanswered" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if !answered }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-times-circle text-secondary"></i> [[topic:thread-tools.mark-unanswered]]</a>
+</li>
+
 <li {{{ if pinned }}}hidden{{{ end }}}>
 	<a component="topic/pin" href="#" class="dropdown-item rounded-1 d-flex align-items-center gap-2 {{{ if pinned }}}hidden{{{ end }}}" role="menuitem"><i class="fa fa-fw fa-thumb-tack text-secondary"></i> [[topic:thread-tools.pin]]</a>
 </li>

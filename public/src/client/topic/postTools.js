@@ -251,6 +251,38 @@ define('forum/topic/postTools', [
 			togglePostDelete($(this));
 		});
 
+		postContainer.on('click', '[component="post/mark-question"]', function () {
+			const btn = $(this);
+			const pid = getData(btn, 'data-pid');
+			api.put(`/posts/${pid}/question`, {}).then(() => {
+				alerts.success('[[topic:post-marked-as-question]]');
+			}).catch(alerts.error);
+		});
+
+		postContainer.on('click', '[component="post/unmark-question"]', function () {
+			const btn = $(this);
+			const pid = getData(btn, 'data-pid');
+			api.del(`/posts/${pid}/question`, {}).then(() => {
+				alerts.success('[[topic:post-unmarked-as-question]]');
+			}).catch(alerts.error);
+		});
+
+		postContainer.on('click', '[component="post/mark-answered"]', function () {
+			const btn = $(this);
+			const pid = getData(btn, 'data-pid');
+			api.put(`/posts/${pid}/answered`, {}).then(() => {
+				alerts.success('[[topic:post-marked-as-answered]]');
+			}).catch(alerts.error);
+		});
+
+		postContainer.on('click', '[component="post/mark-unanswered"]', function () {
+			const btn = $(this);
+			const pid = getData(btn, 'data-pid');
+			api.del(`/posts/${pid}/answered`, {}).then(() => {
+				alerts.success('[[topic:post-unmarked-as-answered]]');
+			}).catch(alerts.error);
+		});
+
 		postContainer.on('click', '[component="post/purge"]', function () {
 			purgePost($(this));
 		});

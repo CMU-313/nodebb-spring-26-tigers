@@ -90,6 +90,26 @@ Topics.unlock = async (req, res) => {
 	helpers.formatApiResponse(200, res);
 };
 
+Topics.markAsQuestion = async (req, res) => {
+	await api.topics.markAsQuestion(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
+Topics.unmarkAsQuestion = async (req, res) => {
+	await api.topics.unmarkAsQuestion(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
+Topics.markAnswered = async (req, res) => {
+	await api.topics.markAnswered(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
+Topics.markUnanswered = async (req, res) => {
+	await api.topics.markUnanswered(req, { tids: [req.params.tid] });
+	helpers.formatApiResponse(200, res);
+};
+
 Topics.follow = async (req, res) => {
 	await api.topics.follow(req, req.params);
 	helpers.formatApiResponse(200, res);

@@ -35,12 +35,7 @@ module.exports = function (Topics) {
 			lastposttime: 0,
 			postcount: 0,
 			viewcount: 0,
-			answered: 0,
 		};
-
-		if (data.anonymous != undefined || data.anonymous != null) {
-			topicData.anonymous = data.anonymous;
-		}
 
 		if (Array.isArray(data.tags) && data.tags.length) {
 			topicData.tags = data.tags.join(',');
@@ -253,12 +248,9 @@ module.exports = function (Topics) {
 
 	async function onNewPost({ pid, tid, uid: postOwner }, { uid, handle }) {
 		const [[postData], [userInfo]] = await Promise.all([
-			posts.getPostSummaryByPids([pid], uid, { extraFields: ['attachments', 'anonymous'] }),
+			posts.getPostSummaryByPids([pid], uid, { extraFields: ['attachments'] }),
 			posts.getUserInfoForPosts([postOwner], uid),
 		]);
-		if (postData.anonymous == null || postData.anonymous == undefined) {
-			delete postData.anonymous;
-		}
 		await Promise.all([
 			Topics.addParentPosts([postData], uid),
 			Topics.syncBacklinks(postData),

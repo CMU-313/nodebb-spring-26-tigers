@@ -201,6 +201,80 @@ module.exports = function (Topics) {
 		return topicData;
 	}
 
+	topicTools.markAsQuestion = async function (tid, uid) {
+		return await toggleQuestion(tid, uid, true);
+	};
+
+	topicTools.unmarkAsQuestion = async function (tid, uid) {
+		return await toggleQuestion(tid, uid, false);
+	};
+
+	async function toggleQuestion(tid, uid, isQuestion) {
+		const topicData = await Topics.getTopicFields(tid, ['tid', 'uid', 'cid']);
+		if (!topicData || !topicData.cid) {
+			throw new Error('[[error:no-topic]]');
+		}
+
+		// Check if user is topic owner or admin/moderator
+		const isOwner = parseInt(topicData.uid, 10) === parseInt(uid, 10);
+		const isAdminOrMod = await privileges.categories.isAdminOrMod(topicData.cid, uid);
+
+		if (!isOwner && !isAdminOrMod) {
+			throw new Error('[[error:no-privileges]]');
+		}
+
+		const promises = [
+			Topics.setTopicField(tid, 'isQuestion', isQuestion ? 1 : 0),
+			Topics.events.log(tid, { type: isQuestion ? 'mark-question' : 'unmark-question', uid }),
+		];
+
+		// When unmarking as question, also clear answered status
+		if (!isQuestion) {
+			promises.push(Topics.setTopicField(tid, 'answered', 0));
+		}
+
+		const results = await Promise.all(promises);
+
+		topicData.isQuestion = isQuestion;
+		topicData.events = results[1];
+		if (!isQuestion) {
+			topicData.answered = 0;
+		}
+
+		plugins.hooks.fire('action:topic.question', { topic: _.clone(topicData), uid });
+		return topicData;
+	}
+
+	topicTools.markAnswered = async function (tid, uid) {
+		return await toggleAnswered(tid, uid, true);
+	};
+
+	topicTools.markUnanswered = async function (tid, uid) {
+		return await toggleAnswered(tid, uid, false);
+	};
+
+	async function toggleAnswered(tid, uid, answered) {
+		const topicData = await Topics.getTopicFields(tid, ['tid', 'uid', 'cid', 'isQuestion']);
+		if (!topicData || !topicData.cid) {
+			throw new Error('[[error:no-topic]]');
+		}
+
+		// Check if user is topic owner or admin/moderator
+		const isOwner = parseInt(topicData.uid, 10) === parseInt(uid, 10);
+		const isAdminOrMod = await privileges.categories.isAdminOrMod(topicData.cid, uid);
+
+		if (!isOwner && !isAdminOrMod) {
+			throw new Error('[[error:no-privileges]]');
+		}
+
+		await Topics.setTopicField(tid, 'answered', answered ? 1 : 0);
+		topicData.events = await Topics.events.log(tid, { type: answered ? 'answered' : 'unanswered', uid });
+		topicData.answered = answered;
+
+		plugins.hooks.fire('action:topic.answered', { topic: _.clone(topicData), uid });
+		return topicData;
+	}
+
 	topicTools.orderPinnedTopics = async function (uid, data) {
 		const { tid, order } = data;
 		const cid = await Topics.getTopicField(tid, 'cid');

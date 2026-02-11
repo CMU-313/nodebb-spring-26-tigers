@@ -1,6 +1,7 @@
 'use strict';
 
 const privileges = require('../privileges');
+const plugins = require('../plugins');
 
 module.exports = function (Posts) {
 	Posts.tools = {};
@@ -40,5 +41,70 @@ module.exports = function (Posts) {
 			post = await Posts.parsePost(post);
 		}
 		return post;
+	}
+
+	Posts.tools.markAsQuestion = async function (uid, pid) {
+		return await togglePostQuestion(uid, pid, true);
+	};
+
+	Posts.tools.unmarkAsQuestion = async function (uid, pid) {
+		return await togglePostQuestion(uid, pid, false);
+	};
+
+	async function togglePostQuestion(uid, pid, isQuestion) {
+		const postData = await Posts.getPostData(pid);
+		if (!postData) {
+			throw new Error('[[error:no-post]]');
+		}
+
+		const canEdit = await privileges.posts.canEdit(pid, uid);
+		if (!canEdit.flag) {
+			throw new Error(canEdit.message);
+		}
+
+		const promises = [
+			Posts.setPostField(pid, 'isQuestion', isQuestion ? 1 : 0),
+		];
+
+		// When unmarking as question, also clear answered status
+		if (!isQuestion) {
+			promises.push(Posts.setPostField(pid, 'answered', 0));
+		}
+
+		await Promise.all(promises);
+
+		postData.isQuestion = isQuestion;
+		if (!isQuestion) {
+			postData.answered = 0;
+		}
+
+		plugins.hooks.fire('action:post.question', { post: postData, uid });
+		return postData;
+	}
+
+	Posts.tools.markAnswered = async function (uid, pid) {
+		return await togglePostAnswered(uid, pid, true);
+	};
+
+	Posts.tools.markUnanswered = async function (uid, pid) {
+		return await togglePostAnswered(uid, pid, false);
+	};
+
+	async function togglePostAnswered(uid, pid, answered) {
+		const postData = await Posts.getPostData(pid);
+		if (!postData) {
+			throw new Error('[[error:no-post]]');
+		}
+
+		const canEdit = await privileges.posts.canEdit(pid, uid);
+		if (!canEdit.flag) {
+			throw new Error(canEdit.message);
+		}
+
+		await Posts.setPostField(pid, 'answered', answered ? 1 : 0);
+		postData.answered = answered;
+
+		plugins.hooks.fire('action:post.answered', { post: postData, uid });
+		return postData;
 	}
 };
