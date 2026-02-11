@@ -29,7 +29,75 @@ define('forum/topic/postTools', [
 		votes.addVoteHandler();
 
 		PostTools.updatePostCount(ajaxify.data.postcount);
+
+		renderComposerAnonymityToggle();
 	};
+
+	function renderComposerAnonymityToggle() {
+		// Remove old listeners in case PostTools.init runs again via ajaxify
+		$(window).off('action:composer.loaded', onComposerEvent);
+		$(window).off('action:composer.opened', onComposerEvent);
+		$(window).off('action:composer.enhanced', onComposerEvent);
+	
+		// Listen for composer render events (different themes/versions fire different ones)
+		$(window).on('action:composer.loaded', onComposerEvent);
+		$(window).on('action:composer.opened', onComposerEvent);
+		$(window).on('action:composer.enhanced', onComposerEvent);
+	
+		function onComposerEvent(event, data) {
+			// Find the composer root from NodeBB’s event data, with a fallback
+			let $composer = data?.postContainer?.closest('[component="composer"], .composer');
+			if (!$composer || !$composer.length) {
+				$composer = $('[component="composer"]:visible, .composer:visible').first();
+			}
+			if (!$composer || !$composer.length) return;
+	
+			// Don’t inject twice (composer can re-render)
+			if ($composer.find('.composer-anonymity-toggle').length) return;
+	
+			// Unique id so label "for" works even if composer opens multiple times
+			const switchId = `composer-anon-switch-${Date.now()}`;
+	
+			// Bootstrap 5 switch markup (matches Harmony / most modern NodeBB themes)
+			const anonymityToggle = `
+				<div class="composer-anonymity-toggle">
+					<div class="form-check form-switch">
+						<input class="form-check-input composer-anonymity-checkbox"
+							type="checkbox"
+							role="switch"
+							id="${switchId}">
+						<label class="form-check-label" for="${switchId}">
+							Post anonymously
+						</label>
+					</div>
+				</div>
+			`;
+	
+			// Insert near the formatting toolbar if possible
+			const $toolbar = $composer
+				.find('.composer-toolbar, [component="composer/formatting"], .formatting-bar')
+				.first();
+	
+			if ($toolbar.length) {
+				$toolbar.after(anonymityToggle);
+			} else {
+				// fallback: near textarea or at top
+				const $textArea = $composer.find('textarea').first();
+				if ($textArea.length) {
+					$textArea.closest('.write, .write-container, form, div').first().before(anonymityToggle);
+				} else {
+					$composer.prepend(anonymityToggle);
+				}
+			}
+	
+			// UI-only state (no backend functionality yet)
+			$composer.off('change', '.composer-anonymity-checkbox');
+			$composer.on('change', '.composer-anonymity-checkbox', function () {
+				$composer.data('isAnonymous', $(this).is(':checked'));
+			});
+		}
+	}
+	
 
 	function renderMenu() {
 		const container = document.querySelector('[component="topic"]');
