@@ -23,6 +23,13 @@ module.exports = function (Posts) {
 			fields: fields,
 		});
 		result.posts.forEach(post => modifyPost(post, fields));
+		result.posts.forEach(
+			(element) => {
+				if (element?.anonymous == 'true') {
+					element.uid = 0;
+				}
+			}
+		);
 		return result.posts;
 	};
 
