@@ -36,13 +36,6 @@ module.exports = function (Topics) {
 			keys: keys,
 		});
 		result.topics.forEach(topic => modifyTopic(topic, fields));
-		result.topics.forEach(
-			(element) => {
-				if (element?.anonymous == 'true') {
-					element.uid = 0;
-				}
-			}
-		);
 		return result.topics;
 	};
 
