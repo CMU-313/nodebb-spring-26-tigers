@@ -2492,7 +2492,7 @@ describe('Topic\'s', () => {
 		});
 	});
 
-	describe.only('anonymous', () => {
+	describe('anonymous', () => {
 		it('should correctly attach anonymous field to topic object upon creation', (done) => {
 			topics.post({
 				uid: topic.userId,
