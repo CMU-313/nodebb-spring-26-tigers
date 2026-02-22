@@ -43,10 +43,6 @@ define('forum/topic/postTools', [
 		$(window).on('action:composer.loaded', onComposerEvent);
 		$(window).on('action:composer.opened', onComposerEvent);
 		$(window).on('action:composer.enhanced', onComposerEvent);
-		
-		//Hook into composer submit to send anon flag to backend
-		hooks.off('filter:composer.submit', onComposerSubmit);
-		hooks.on('filter:composer.submit', onComposerSubmit);
 
 		function onComposerEvent(event, data) {
 			// Find the composer root from NodeBB’s event data, with a fallback
@@ -101,14 +97,6 @@ define('forum/topic/postTools', [
 			});
 		}
 	}
-
-	function onComposerSubmit(data) {
-		const $composer = $('[component="composer"]:visible, .composer:visible').first();
-		if ($composer.length) {
-			data.anonymous = !!$composer.data('isAnonymous');
-		}
-		return data;
-}
 
 	function renderMenu() {
 		const container = document.querySelector('[component="topic"]');
