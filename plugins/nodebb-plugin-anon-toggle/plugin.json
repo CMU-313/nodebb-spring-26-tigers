@@ -1,0 +1,13 @@
+{
+    "id": "nodebb-plugin-anon-toggle",
+    "name": "Anon Toggle",
+    "description": "Adds an anonymous toggle to the composer UI and adds anonymous=true/false to the composer payload.",
+    "url": "",
+    "library": "library.js",
+    "staticDirs": {
+      "static": "public"
+    },
+    "hooks": [
+      { "hook": "filter:scripts.get", "method": "addScripts" }
+    ]
+  }
