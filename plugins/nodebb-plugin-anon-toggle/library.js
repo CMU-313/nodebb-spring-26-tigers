@@ -43,7 +43,7 @@ exports.anonymizePostGet = async function (hookData) {
 //Handle multiple posts retrieval
 exports.anonymizePostsGet = async function (hookData) {
     if (hookData && Array.isArray(hookData.posts)) {
-      hookData.posts.forEach(scrubUser);
+        hookData.posts.forEach(scrubUser);
     }
     return hookData;
 };
