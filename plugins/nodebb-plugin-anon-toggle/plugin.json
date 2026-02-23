@@ -8,9 +8,10 @@
         "static": "public"
     },
     "hooks": [
-        {
-            "hook": "filter:scripts.get",
-            "method": "addScripts"
-        }
+    { "hook": "filter:scripts.get", "method": "addScripts" },
+
+    { "hook": "filter:post.get", "method": "anonymizePostGet" },
+    { "hook": "filter:post.getPosts", "method": "anonymizePostsGet" },
+    { "hook": "filter:post.getPostSummaryByPids", "method": "anonymizePostsGet" }
     ]
 }
