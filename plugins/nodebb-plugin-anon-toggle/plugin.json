@@ -5,9 +5,12 @@
     "url": "",
     "library": "library.js",
     "staticDirs": {
-      "static": "public"
+        "static": "public"
     },
     "hooks": [
-      { "hook": "filter:scripts.get", "method": "addScripts" }
+        {
+            "hook": "filter:scripts.get",
+            "method": "addScripts"
+        }
     ]
-  }
+}
