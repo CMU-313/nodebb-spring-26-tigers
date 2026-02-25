@@ -98,6 +98,7 @@
         "multer": "2.0.2",
         "nconf": "0.13.0",
         "nodebb-plugin-2factor": "7.6.1",
+        "nodebb-plugin-anon-toggle": "file:plugins/nodebb-plugin-anon-toggle",
         "nodebb-plugin-composer-default": "10.3.1",
         "nodebb-plugin-dbsearch": "6.3.4",
         "nodebb-plugin-emoji": "6.0.5",

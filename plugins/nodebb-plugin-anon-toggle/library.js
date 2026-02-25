@@ -13,29 +13,17 @@ function isAnonValue(v) {
 }
 
 // Scrub user data from a post object if it's marked as anonymous
-function scrubUser(post) {
+function scrubPostUser(post) {
     // Only scrub if the post is marked as anonymous
     if (!post || !isAnonValue(post.anonymous)) return;
   
     post.uid = 0;
-    post.fromuid = 0;
-  
-    post.user = post.user || {};
-    post.user.uid = 0;
-    post.user.username = 'Anonymous';
-    post.user.displayname = 'Anonymous';
-    post.user.userslug = '';
-    post.user.picture = '';
-    post.user['icon:text'] = 'A';
-    post.user['icon:bgColor'] = '#808080';
-  
-    post.isAnonymousPost = true;
 }
 
 //Handle single post retrieval
 exports.anonymizePostGet = async function (hookData) {
     if (hookData && hookData.post) {
-        scrubUser(hookData.post);
+        scrubPostUser(hookData.post);
     }
     return hookData;
 };
@@ -43,7 +31,7 @@ exports.anonymizePostGet = async function (hookData) {
 //Handle multiple posts retrieval
 exports.anonymizePostsGet = async function (hookData) {
     if (hookData && Array.isArray(hookData.posts)) {
-        hookData.posts.forEach(scrubUser);
+        hookData.posts.forEach(scrubPostUser);
     }
     return hookData;
 };
