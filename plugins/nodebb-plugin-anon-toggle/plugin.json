@@ -12,6 +12,11 @@
 
     { "hook": "filter:post.get", "method": "anonymizePostGet" },
     { "hook": "filter:post.getPosts", "method": "anonymizePostsGet" },
-    { "hook": "filter:post.getPostSummaryByPids", "method": "anonymizePostsGet" }
+    { "hook": "filter:post.getPostSummaryByPids", "method": "anonymizePostsGet" },
+
+    { "hook": "filter:topic.get", "method": "anonymizeTopicGet" },
+    { "hook": "filter:topics.get", "method": "anonymizeTopicsGet" },
+    { "hook": "filter:topic.getPosts", "method": "anonymizeTopicsGet" },
+    { "hook": "filter:topic.getFields", "method": "anonymizeTopicsGet" }
     ]
 }
