@@ -12,8 +12,9 @@ const db = require('./mocks/databasemock');
 const topics = require('../src/topics');
 const categories = require('../src/categories');
 const user = require('../src/user');
-const postsIndex = require('../src/posts/index')
-const library = require('../plugins/nodebb-plugin-anon-toggle/library')
+const postsIndex = require('../src/posts/index');
+const topicsIndex = require('../src/topics/index');
+const library = require('../plugins/nodebb-plugin-anon-toggle/library');
 
 describe('anonymous', () => {
     let uid
@@ -76,5 +77,19 @@ describe('anonymous', () => {
                 assert.strictEqual(post.uid, uid);
             }
         })
+    });
+
+    it('should anonymize single anonymous topic', async () => {
+        const sampleHookData = {topic: anonTopicData1, uid: uid}
+
+        const result = await library.anonymizeTopicGet(sampleHookData);
+        assert.strictEqual(result.topic.uid, 0);
+    });
+
+    it('should not anonymize single normal topic', async () => {
+        const sampleHookData = {topic: topicData, uid: uid}
+
+        const result = await library.anonymizeTopicGet(sampleHookData);
+        assert.strictEqual(result.topic.uid, 1);
     });
 });
