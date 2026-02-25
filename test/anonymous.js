@@ -92,4 +92,19 @@ describe('anonymous', () => {
         const result = await library.anonymizeTopicGet(sampleHookData);
         assert.strictEqual(result.topic.uid, 1);
     });
+
+    it('should batch anonymize topics', async () => {
+        const topics = await topicsIndex.getTopicsByTids([anonTopicData1.tid, anonTopicData2.tid], uid)
+        const sampleHookData = {topics: topics, uid: uid}
+
+        const result = await library.anonymizeTopicsGet(sampleHookData);
+        result.topics.forEach((topic) => {
+            if (topic.tid == anonTopicData1.tid || topic.tid == anonTopicData2.tid) {
+                assert.strictEqual(topic.uid, 0);
+            }
+            else {
+                assert.strictEqual(topic.uid, uid);
+            }
+        })
+    });
 });
