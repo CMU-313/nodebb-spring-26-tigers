@@ -17,9 +17,6 @@ module.exports = function (Posts) {
 			return [];
 		}
 		const keys = pids.map(pid => `post:${pid}`);
-		if (fields.length) {
-			fields.push('anonymous');
-		}
 		const postData = await db.getObjects(keys, fields);
 		postData.forEach(post => delete post?.anonymous);
 		const result = await plugins.hooks.fire('filter:post.getFields', {

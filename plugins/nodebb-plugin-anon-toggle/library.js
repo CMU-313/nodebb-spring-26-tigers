@@ -17,6 +17,18 @@ function scrubUser(obj) {
     // Only scrub if the post is marked as anonymous
     if (!obj || !isAnonValue(obj.anonymous)) return;
     obj.uid = 0;
+    obj.fromuid = 0;
+
+    obj.user = obj.user || {};
+    obj.user.uid = 0;
+    obj.user.username = 'Anonymous';
+    obj.user.displayname = 'Anonymous';
+    obj.user.userslug = '';
+    obj.user.picture = '';
+    obj.user['icon:text'] = 'A';
+    obj.user['icon:bgColor'] = '#808080';
+
+    obj.isAnonymousPost = true;
 }
 
 //Handle single post retrieval
@@ -48,10 +60,5 @@ exports.anonymizeTopicsGet = async function (hookData) {
     if (hookData && Array.isArray(hookData.topics)) {
         hookData.topics.forEach(scrubUser);
     }
-    return hookData;
-};
-
-exports.test = async function (hookData) {
-    console.log("test", hookData);
     return hookData;
 };
