@@ -21,7 +21,13 @@ module.exports = function (Posts) {
 			fields.push('anonymous');
 		}
 		const postData = await db.getObjects(keys, fields);
-		postData.forEach((post) => (post?.anonymous == undefined || post?.anonymous == null) ? (delete post?.anonymous) : null);
+		postData.forEach(
+			(post) => {
+				if (post?.anonymous == undefined || post?.anonymous == null) {
+					delete post?.anonymous;
+				}
+			}
+		);
 		const result = await plugins.hooks.fire('filter:post.getFields', {
 			pids: pids,
 			posts: postData,
