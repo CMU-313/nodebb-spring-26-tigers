@@ -107,6 +107,7 @@ describe('anonymizing topics and posts', () => {
 
 describe('anonymous toggle', function () {
     let submitHandler;
+    let client;
 
     before(function (done) {
         // Create DOM
@@ -114,12 +115,11 @@ describe('anonymous toggle', function () {
             url: "http://localhost"
         });
 
-        
-        const jquery = require('jquery');
-        const $ = jquery(dom.window);
-
         global.window = dom.window;
         global.document = dom.window.document;
+
+        const $ = require('jquery');
+
         global.$ = $;
         global.window.$ = $;
         global.window.jQuery = $;
@@ -136,10 +136,21 @@ describe('anonymous toggle', function () {
         };
 
         // Load client file after mocking window
-        require('../plugins/nodebb-plugin-anon-toggle/public/client');
-
+        client = require('../plugins/nodebb-plugin-anon-toggle/public/client');
         // Give time for Promise to resolve
         setTimeout(done, 10);
+    });
+
+    it('should inject toggle', function () {
+        const $composer = $('<div class="composer"></div>');
+        $('body').append($composer);
+
+        // Trigger composer loaded
+        client.injectToggle($composer, '1');
+
+        const $checkbox = $composer.find('.composer-anonymity-checkbox');
+        assert.strictEqual($checkbox.length, 1);
+        assert.strictEqual($composer.find('label').text(), 'Post anonymously');
     });
 
     it('should set anonymous=true when toggle is checked', function () {

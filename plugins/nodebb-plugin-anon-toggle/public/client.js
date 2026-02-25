@@ -1,8 +1,7 @@
 'use strict';
 /* global $, window */
 
-(function () {
-
+(function (exports) {
     //Attach submit hooks as soon as the script loads
     attachSubmitHook();
 
@@ -71,10 +70,17 @@
                 console.error('[anon-toggle] Failed to attach submit hook:', err);
             });
     }
+        
     //Inject toggle when composer loads for topics and replys
     $(window).on('action:composer.loaded', function (event, data) {
         const postContainer = data && data.postContainer;
         const post_uuid = data && data.post_uuid;
         injectToggle(postContainer, post_uuid);
     });
-})();
+    
+    //for testing purposes
+    if (typeof module !== 'undefined' && module.exports) {
+        exports.injectToggle = injectToggle;
+        exports.attachSubmitHook = attachSubmitHook;
+    }
+})(typeof exports === 'undefined' ? this['anonToggle']={} : exports);
