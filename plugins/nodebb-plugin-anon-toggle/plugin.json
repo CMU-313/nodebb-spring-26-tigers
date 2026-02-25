@@ -17,6 +17,7 @@
     { "hook": "filter:topic.get", "method": "anonymizeTopicGet" },
     { "hook": "filter:topics.get", "method": "anonymizeTopicsGet" },
     { "hook": "filter:topic.getPosts", "method": "anonymizeTopicsGet" },
-    { "hook": "filter:topic.getFields", "method": "anonymizeTopicsGet" }
+    { "hook": "filter:topic.getFields", "method": "anonymizeTopicsGet" },
+    { "hook": "filter:post.getFields", "method": "test" }
     ]
 }

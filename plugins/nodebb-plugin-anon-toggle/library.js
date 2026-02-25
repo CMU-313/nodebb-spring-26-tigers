@@ -50,3 +50,8 @@ exports.anonymizeTopicsGet = async function (hookData) {
     }
     return hookData;
 };
+
+exports.test = async function (hookData) {
+    console.log("test", hookData);
+    return hookData;
+};
