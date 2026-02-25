@@ -12,6 +12,7 @@ const db = require('./mocks/databasemock');
 const topics = require('../src/topics');
 const categories = require('../src/categories');
 const user = require('../src/user');
+const postsIndex = require('../src/posts/index')
 const library = require('../plugins/nodebb-plugin-anon-toggle/library')
 
 describe('anonymous', () => {
@@ -54,11 +55,26 @@ describe('anonymous', () => {
         const result = await library.anonymizePostGet(sampleHookData);
         assert.strictEqual(result.post.uid, 0);
     });
-    
+
     it('should not anonymize single normal post', async () => {
         const sampleHookData = {post: postData, uid: uid}
 
         const result = await library.anonymizePostGet(sampleHookData);
         assert.strictEqual(result.post.uid, uid);
+    });
+
+    it('should batch anonymize posts', async () => {
+        const posts = await postsIndex.getPostsByPids([anonPostData1.pid, anonPostData2.pid], uid)
+        const sampleHookData = {posts: posts, uid: uid}
+
+        const result = await library.anonymizePostsGet(sampleHookData);
+        result.posts.forEach((post) => {
+            if (post.pid == anonPostData1.pid || post.pid == anonPostData2.pid) {
+                assert.strictEqual(post.uid, 0);
+            }
+            else {
+                assert.strictEqual(post.uid, uid);
+            }
+        })
     });
 });
