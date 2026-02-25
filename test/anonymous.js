@@ -2,12 +2,6 @@
 
 const assert = require('assert');
 
-const nconf = require('nconf');
-const path = require('path');
-const util = require('util');
-
-const sleep = util.promisify(setTimeout);
-
 const db = require('./mocks/databasemock');
 const topics = require('../src/topics');
 const categories = require('../src/categories');
