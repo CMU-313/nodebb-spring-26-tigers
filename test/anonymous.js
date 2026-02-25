@@ -10,7 +10,9 @@ const postsIndex = require('../src/posts/index');
 const topicsIndex = require('../src/topics/index');
 const library = require('../plugins/nodebb-plugin-anon-toggle/library');
 
-describe('anonymous', () => {
+const { JSDOM } = require('jsdom');
+
+describe('anonymizing topics and posts', () => {
     let uid
     let anonPostData1, anonPostData2, postData;
     let anonTopicData1, anonTopicData2, topicData;
@@ -100,5 +102,83 @@ describe('anonymous', () => {
                 assert.strictEqual(topic.uid, uid);
             }
         })
+    });
+});
+
+describe('anonymous toggle', function () {
+    let submitHandler;
+
+    before(function (done) {
+        // Create DOM
+        const dom = new JSDOM(`<!DOCTYPE html><body></body>`, {
+            url: "http://localhost"
+        });
+
+        
+        const jquery = require('jquery');
+        const $ = jquery(dom.window);
+
+        global.window = dom.window;
+        global.document = dom.window.document;
+        global.$ = $;
+        global.window.$ = $;
+        global.window.jQuery = $;
+
+        // Mock window.app.require
+        global.window.app = {
+            require: () => Promise.resolve([{
+                on: (event, handler) => {
+                    if (event === 'filter:composer.submit') {
+                        submitHandler = handler;
+                    }
+                }
+            }])
+        };
+
+        // Load client file after mocking window
+        require('../plugins/nodebb-plugin-anon-toggle/public/client');
+
+        // Give time for Promise to resolve
+        setTimeout(done, 10);
+    });
+
+    it('should set anonymous=true when toggle is checked', function () {
+        const uuid = 'abc123';
+
+        // Add fake composer DOM
+        $('body').append(`
+            <div class="composer" data-uuid="${uuid}">
+                <input type="checkbox"
+                       class="composer-anonymity-checkbox"
+                       checked />
+            </div>
+        `);
+
+        const submitHookData = {
+            composerData: { uuid }
+        };
+
+        const result = submitHandler(submitHookData);
+
+        assert.strictEqual(result.composerData.anonymous, true);
+    });
+
+    it('should set anonymous=false when toggle is not checked', function () {
+        const uuid = 'xyz789';
+
+        $('body').append(`
+            <div class="composer" data-uuid="${uuid}">
+                <input type="checkbox"
+                       class="composer-anonymity-checkbox" />
+            </div>
+        `);
+
+        const submitHookData = {
+            composerData: { uuid }
+        };
+
+        const result = submitHandler(submitHookData);
+
+        assert.strictEqual(result.composerData.anonymous, false);
     });
 });
