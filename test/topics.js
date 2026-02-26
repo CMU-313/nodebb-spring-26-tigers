@@ -1885,6 +1885,39 @@ describe('Topic\'s', () => {
 			assert.deepEqual(results, [1, 2, 3]);
 		});
 	});
+    	describe('question/answered state', () => {
+		let questionTid;
+		let ownerUid;
+		let otherUid;
+
+		before(async () => {
+			ownerUid = await User.create({ username: 'questionOwner', password: '123456' });
+			otherUid = await User.create({ username: 'questionOther', password: '123456' });
+
+			const { topicData } = await topics.post({
+				uid: ownerUid,
+				cid: categoryObj.cid,
+				title: 'question answered state test',
+				content: 'main post',
+			});
+			questionTid = topicData.tid;
+		});
+
+		async function getFlags() {
+			const data = await topics.getTopicFields(questionTid, ['isQuestion', 'answered', 'notAnswered']);
+			return {
+				isQuestion: Number(data.isQuestion || 0),
+				answered: Number(data.answered || 0),
+				notAnswered: Number(data.notAnswered || 0),
+			};
+		}
+
+		it('should default answered/notAnswered to 0', async () => {
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 0);
+		});	
+	});
 
 	it('should check if user is moderator', (done) => {
 		socketTopics.isModerator({ uid: adminUid }, topic.tid, (err, isModerator) => {
