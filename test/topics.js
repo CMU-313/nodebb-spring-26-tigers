@@ -1885,7 +1885,7 @@ describe('Topic\'s', () => {
 			assert.deepEqual(results, [1, 2, 3]);
 		});
 	});
-    	describe('question/answered state', () => {
+	describe('question/answered state', () => {
 		let questionTid;
 		let ownerUid;
 		let otherUid;
@@ -1916,8 +1916,8 @@ describe('Topic\'s', () => {
 			const f = await getFlags();
 			assert.strictEqual(f.answered, 0);
 			assert.strictEqual(f.notAnswered, 0);
-		});	
-        it('markUnanswered should set answered=0, notAnswered=1 (owner)', async () => {
+		});
+		it('markUnanswered should set answered=0, notAnswered=1 (owner)', async () => {
 			await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
 
 			const f = await getFlags();
@@ -1937,7 +1937,8 @@ describe('Topic\'s', () => {
 			assert.strictEqual(f.answered, 0);
 			assert.strictEqual(f.notAnswered, 0);
 		});
-        it('should not allow non owner or non admin to mark answered', async () => {
+		
+		it('should not allow non owner or non admin to mark answered', async () => {
 			await assert.rejects(
 				apiTopics.markAnswered({ uid: otherUid }, { tids: [questionTid] }),
 				{ message: '[[error:no-privileges]]' }
@@ -1951,20 +1952,20 @@ describe('Topic\'s', () => {
 			assert.strictEqual(f.answered, 1);
 			assert.strictEqual(f.notAnswered, 0);
 		});
-        it('DEBUG - check badge HTML', async () => {
-            await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
-            await apiTopics.markAnswered({ uid: ownerUid }, { tids: [questionTid] });
+		it('DEBUG - check badge HTML', async () => {
+			await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+			await apiTopics.markAnswered({ uid: ownerUid }, { tids: [questionTid] });
 
-            const topicData = await topics.getTopicData(questionTid);
-            const { body } = await request.get(
-                `${nconf.get('url')}/topic/${topicData.slug}`,
-                { jar: adminJar }
-            );
+			const topicData = await topics.getTopicData(questionTid);
+			const { body } = await request.get(
+				`${nconf.get('url')}/topic/${topicData.slug}`,
+				{ jar: adminJar }
+			);
 
-            // find and print the labels section
-            const idx = body.indexOf('topic/labels');
-            console.log(body.substring(idx, idx + 1500));
-        }); 
+			// find and print the labels section
+			const idx = body.indexOf('topic/labels');
+			console.log(body.substring(idx, idx + 1500));
+		}); 
 	});
 
 	it('should check if user is moderator', (done) => {
