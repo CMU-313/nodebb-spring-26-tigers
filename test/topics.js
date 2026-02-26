@@ -1917,6 +1917,26 @@ describe('Topic\'s', () => {
 			assert.strictEqual(f.answered, 0);
 			assert.strictEqual(f.notAnswered, 0);
 		});	
+        it('markUnanswered should set answered=0, notAnswered=1 (owner)', async () => {
+			await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 1);
+		});
+
+		it('unmarkAsQuestion should clear answered/notAnswered back to 0', async () => {
+			// ensure it is a question first 
+			await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+			await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
+
+			await apiTopics.unmarkAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.isQuestion, 0);
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 0);
+		});
 	});
 
 	it('should check if user is moderator', (done) => {
