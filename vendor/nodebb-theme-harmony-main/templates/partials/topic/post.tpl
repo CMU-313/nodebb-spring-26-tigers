@@ -80,7 +80,7 @@
 			</div>
 		</div>
 
-		<div component="post/badges" class="d-flex gap-2 mb-1 {{{ if (!posts.isQuestion && !posts.answered) }}}hidden{{{ end }}}">
+		<div component="post/badges" class="d-flex gap-2 mb-1 {{{ if (!posts.isQuestion && (!posts.answered && !posts.notAnswered)) }}}hidden{{{ end }}}">
 			<span component="post/question" class="badge border border-primary text-primary {{{ if !posts.isQuestion }}}hidden{{{ end }}}">
 				<i class="fa fa-question-circle"></i> [[topic:question]]
 			</span>

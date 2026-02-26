@@ -263,6 +263,9 @@ TopicObjectSlim:
         answered:
           type: number
           description: Whether or not this topic has been answered (0 or 1)
+        notAnswered:
+          type: number
+          description: Whether or not this topic has been explicitly marked as not answered (0 or 1)
         upvotes:
           type: number
         downvotes:

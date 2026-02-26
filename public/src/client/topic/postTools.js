@@ -686,6 +686,8 @@ define('forum/topic/postTools', [
 			answeredBadge.toggleClass('hidden', true);
 			notAnsweredBadge.toggleClass('hidden', true);
 		}
+		const badgesContainer = postEl.find('[component="post/badges"]');
+		badgesContainer.toggleClass('hidden', badgesContainer.children(':not(.hidden)').length === 0);
 		const markQuestionBtn = postEl.find('[component="post/mark-question"]');
 		const unmarkQuestionBtn = postEl.find('[component="post/unmark-question"]');
 		const markAnsweredBtn = postEl.find('[component="post/mark-answered"]');
@@ -705,6 +707,8 @@ define('forum/topic/postTools', [
 		}
 		postEl.find('[component="post/answered"]').toggleClass('hidden', !data.answered);
 		postEl.find('[component="post/not-answered"]').toggleClass('hidden', !data.notAnswered);
+		const badgesContainer = postEl.find('[component="post/badges"]');
+		badgesContainer.toggleClass('hidden', badgesContainer.children(':not(.hidden)').length === 0);
 		const markAnsweredBtn = postEl.find('[component="post/mark-answered"]');
 		const markUnansweredBtn = postEl.find('[component="post/mark-unanswered"]');
 		markAnsweredBtn.toggleClass('hidden', !!data.answered).parent().attr('hidden', data.answered ? '' : null);
