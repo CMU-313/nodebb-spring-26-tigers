@@ -1937,6 +1937,20 @@ describe('Topic\'s', () => {
 			assert.strictEqual(f.answered, 0);
 			assert.strictEqual(f.notAnswered, 0);
 		});
+        it('should not allow non owner or non admin to mark answered', async () => {
+			await assert.rejects(
+				apiTopics.markAnswered({ uid: otherUid }, { tids: [questionTid] }),
+				{ message: '[[error:no-privileges]]' }
+			);
+		});
+
+		it('should allow admin or owner to mark answered', async () => {
+			await apiTopics.markAnswered({ uid: adminUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 1);
+			assert.strictEqual(f.notAnswered, 0);
+		});
 	});
 
 	it('should check if user is moderator', (done) => {
