@@ -333,4 +333,9 @@ async function isDirectory(dirPath) {
 	}
 }
 
+// Backward-compatibility shim for plugins using the old plugins.fireHook() API
+Plugins.fireHook = async function (hook, params) {
+	return Plugins.hooks.fire(hook, params);
+};
+
 require('../promisify')(Plugins);

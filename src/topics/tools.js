@@ -225,7 +225,6 @@ module.exports = function (Topics) {
 
 		const promises = [
 			Topics.setTopicField(tid, 'isQuestion', isQuestion ? 1 : 0),
-			Topics.events.log(tid, { type: isQuestion ? 'mark-question' : 'unmark-question', uid }),
 		];
 
 		// When unmarking as question, also clear answered status
@@ -233,10 +232,9 @@ module.exports = function (Topics) {
 			promises.push(Topics.setTopicField(tid, 'answered', 0));
 		}
 
-		const results = await Promise.all(promises);
+		await Promise.all(promises);
 
 		topicData.isQuestion = isQuestion;
-		topicData.events = results[1];
 		if (!isQuestion) {
 			topicData.answered = 0;
 		}
@@ -268,7 +266,6 @@ module.exports = function (Topics) {
 		}
 
 		await Topics.setTopicField(tid, 'answered', answered ? 1 : 0);
-		topicData.events = await Topics.events.log(tid, { type: answered ? 'answered' : 'unanswered', uid });
 		topicData.answered = answered;
 
 		plugins.hooks.fire('action:topic.answered', { topic: _.clone(topicData), uid });

@@ -673,5 +673,40 @@ define('forum/topic/postTools', [
 		}
 	}
 
+	PostTools.setPostQuestionState = function (data) {
+		const postEl = $(`[data-pid="${data.pid}"]`);
+		if (!postEl.length) {
+			return;
+		}
+		const questionBadge = postEl.find('[component="post/question"]');
+		const answeredBadge = postEl.find('[component="post/answered"]');
+		questionBadge.toggleClass('hidden', !data.isQuestion);
+		if (!data.isQuestion) {
+			answeredBadge.toggleClass('hidden', true);
+		}
+		const markQuestionBtn = postEl.find('[component="post/mark-question"]');
+		const unmarkQuestionBtn = postEl.find('[component="post/unmark-question"]');
+		const markAnsweredBtn = postEl.find('[component="post/mark-answered"]');
+		const markUnansweredBtn = postEl.find('[component="post/mark-unanswered"]');
+		markQuestionBtn.toggleClass('hidden', !!data.isQuestion).parent().attr('hidden', data.isQuestion ? '' : null);
+		unmarkQuestionBtn.toggleClass('hidden', !data.isQuestion).parent().attr('hidden', !data.isQuestion ? '' : null);
+		if (!data.isQuestion) {
+			markAnsweredBtn.toggleClass('hidden', true).parent().attr('hidden', '');
+			markUnansweredBtn.toggleClass('hidden', true).parent().attr('hidden', '');
+		}
+	};
+
+	PostTools.setPostAnsweredState = function (data) {
+		const postEl = $(`[data-pid="${data.pid}"]`);
+		if (!postEl.length) {
+			return;
+		}
+		postEl.find('[component="post/answered"]').toggleClass('hidden', !data.answered);
+		const markAnsweredBtn = postEl.find('[component="post/mark-answered"]');
+		const markUnansweredBtn = postEl.find('[component="post/mark-unanswered"]');
+		markAnsweredBtn.toggleClass('hidden', !!data.answered).parent().attr('hidden', data.answered ? '' : null);
+		markUnansweredBtn.toggleClass('hidden', !data.answered).parent().attr('hidden', !data.answered ? '' : null);
+	};
+
 	return PostTools;
 });

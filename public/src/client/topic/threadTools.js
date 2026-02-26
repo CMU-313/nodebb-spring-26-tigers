@@ -423,6 +423,14 @@ define('forum/topic/threadTools', [
 		components.get('topic/mark-question').toggleClass('hidden', data.isQuestion).parent().attr('hidden', data.isQuestion ? '' : null);
 		components.get('topic/unmark-question').toggleClass('hidden', !data.isQuestion).parent().attr('hidden', !data.isQuestion ? '' : null);
 
+		// Show/hide the question badge in the topic labels area
+		const labelsEl = components.get('topic/labels');
+		components.get('topic/question').toggleClass('hidden', !data.isQuestion);
+		if (!data.isQuestion) {
+			components.get('topic/answered').toggleClass('hidden', true);
+		}
+		labelsEl.toggleClass('hidden', labelsEl.children(':not(.hidden)').length === 0);
+
 		// When marking as not a question, also hide the answered options
 		if (!data.isQuestion) {
 			components.get('topic/mark-answered').toggleClass('hidden', true).parent().attr('hidden', '');
@@ -436,8 +444,6 @@ define('forum/topic/threadTools', [
 		}
 
 		ajaxify.data.isQuestion = data.isQuestion;
-
-		posts.addTopicEvents(data.events);
 	};
 
 	ThreadTools.setAnsweredState = function (data) {
@@ -449,9 +455,12 @@ define('forum/topic/threadTools', [
 		components.get('topic/mark-answered').toggleClass('hidden', data.answered).parent().attr('hidden', data.answered ? '' : null);
 		components.get('topic/mark-unanswered').toggleClass('hidden', !data.answered).parent().attr('hidden', !data.answered ? '' : null);
 
-		ajaxify.data.answered = data.answered;
+		// Show/hide the answered badge in the topic labels area
+		const labelsEl = components.get('topic/labels');
+		components.get('topic/answered').toggleClass('hidden', !data.answered);
+		labelsEl.toggleClass('hidden', labelsEl.children(':not(.hidden)').length === 0);
 
-		posts.addTopicEvents(data.events);
+		ajaxify.data.answered = data.answered;
 	};
 
 	function setFollowState(state) {
