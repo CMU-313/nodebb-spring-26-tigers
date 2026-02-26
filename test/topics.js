@@ -1951,6 +1951,67 @@ describe('Topic\'s', () => {
 			assert.strictEqual(f.answered, 1);
 			assert.strictEqual(f.notAnswered, 0);
 		});
+        it('DEBUG - check badge HTML', async () => {
+            await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+            await apiTopics.markAnswered({ uid: ownerUid }, { tids: [questionTid] });
+
+            const topicData = await topics.getTopicData(questionTid);
+            const { body } = await request.get(
+                `${nconf.get('url')}/topic/${topicData.slug}`,
+                { jar: adminJar }
+            );
+
+            // find and print the labels section
+            const idx = body.indexOf('topic/labels');
+            console.log(body.substring(idx, idx + 1500));
+        });
+        
+        it('should show answered badge and hide not-answered badge in HTML when answered', async () => {
+            await apiTopics.markAnswered({ uid: ownerUid }, { tids: [questionTid] });
+
+            const topicData = await topics.getTopicData(questionTid);
+            const { response, body } = await request.get(
+                `${nconf.get('url')}/topic/${topicData.slug}`,
+                { jar: adminJar }
+            );
+            assert.strictEqual(response.statusCode, 200);
+
+            // answered badge should NOT have hidden class
+            assert.match(body, /component="topic\/answered"[^>]*(?!hidden)[^>]*>/);
+            // not-answered badge SHOULD have hidden class
+            assert.match(body, /component="topic\/not-answered"[^>]*hidden/);
+        });
+
+        it('should show not-answered badge and hide answered badge in HTML when unanswered', async () => {
+            await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
+
+            const topicData = await topics.getTopicData(questionTid);
+            const { response, body } = await request.get(
+                `${nconf.get('url')}/topic/${topicData.slug}`,
+                { jar: adminJar }
+            );
+            assert.strictEqual(response.statusCode, 200);
+
+            // not-answered badge should NOT have hidden class
+            assert.match(body, /component="topic\/not-answered"[^>]*(?!hidden)[^>]*>/);
+            // answered badge SHOULD have hidden class
+            assert.match(body, /component="topic\/answered"[^>]*hidden/);
+        });
+
+        it('should hide both answered and not-answered badges when not a question', async () => {
+            await apiTopics.unmarkAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+
+            const topicData = await topics.getTopicData(questionTid);
+            const { response, body } = await request.get(
+                `${nconf.get('url')}/topic/${topicData.slug}`,
+                { jar: adminJar }
+            );
+            assert.strictEqual(response.statusCode, 200);
+
+            assert.match(body, /component="topic\/answered"[^>]*hidden/);
+            assert.match(body, /component="topic\/not-answered"[^>]*hidden/);
+        });
+
 	});
 
 	it('should check if user is moderator', (done) => {
