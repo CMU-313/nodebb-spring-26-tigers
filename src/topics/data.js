@@ -12,7 +12,7 @@ const intFields = [
 	'tid', 'cid', 'uid', 'mainPid', 'postcount',
 	'viewcount', 'postercount', 'followercount',
 	'deleted', 'locked', 'pinned', 'pinExpiry',
-	'isQuestion', 'answered',
+	'isQuestion', 'answered', 'notAnswered',
 	'timestamp', 'upvotes', 'downvotes',
 	'lastposttime', 'deleterUid',
 ];

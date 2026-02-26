@@ -87,6 +87,9 @@
 			<span component="post/answered" class="badge border border-success text-success {{{ if !posts.answered }}}hidden{{{ end }}}">
 				<i class="fa fa-check-circle"></i> [[topic:answered]]
 			</span>
+			<span component="post/not-answered" class="badge border border-danger text-danger {{{ if !posts.notAnswered }}}hidden{{{ end }}}">
+				<i class="fa fa-times-circle"></i> [[topic:not-answered]]
+			</span>
 		</div>
 		<div class="content text-break" component="post/content" itemprop="text">
 			{posts.content}

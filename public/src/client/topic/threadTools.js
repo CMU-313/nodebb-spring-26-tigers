@@ -428,6 +428,7 @@ define('forum/topic/threadTools', [
 		components.get('topic/question').toggleClass('hidden', !data.isQuestion);
 		if (!data.isQuestion) {
 			components.get('topic/answered').toggleClass('hidden', true);
+			components.get('topic/not-answered').toggleClass('hidden', true);
 		}
 		labelsEl.toggleClass('hidden', labelsEl.children(':not(.hidden)').length === 0);
 
@@ -455,12 +456,14 @@ define('forum/topic/threadTools', [
 		components.get('topic/mark-answered').toggleClass('hidden', data.answered).parent().attr('hidden', data.answered ? '' : null);
 		components.get('topic/mark-unanswered').toggleClass('hidden', !data.answered).parent().attr('hidden', !data.answered ? '' : null);
 
-		// Show/hide the answered badge in the topic labels area
+		// Show/hide the answered/not-answered badges in the topic labels area
 		const labelsEl = components.get('topic/labels');
 		components.get('topic/answered').toggleClass('hidden', !data.answered);
+		components.get('topic/not-answered').toggleClass('hidden', !data.notAnswered);
 		labelsEl.toggleClass('hidden', labelsEl.children(':not(.hidden)').length === 0);
 
 		ajaxify.data.answered = data.answered;
+		ajaxify.data.notAnswered = data.notAnswered;
 	};
 
 	function setFollowState(state) {

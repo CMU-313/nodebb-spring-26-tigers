@@ -680,9 +680,11 @@ define('forum/topic/postTools', [
 		}
 		const questionBadge = postEl.find('[component="post/question"]');
 		const answeredBadge = postEl.find('[component="post/answered"]');
+		const notAnsweredBadge = postEl.find('[component="post/not-answered"]');
 		questionBadge.toggleClass('hidden', !data.isQuestion);
 		if (!data.isQuestion) {
 			answeredBadge.toggleClass('hidden', true);
+			notAnsweredBadge.toggleClass('hidden', true);
 		}
 		const markQuestionBtn = postEl.find('[component="post/mark-question"]');
 		const unmarkQuestionBtn = postEl.find('[component="post/unmark-question"]');
@@ -702,6 +704,7 @@ define('forum/topic/postTools', [
 			return;
 		}
 		postEl.find('[component="post/answered"]').toggleClass('hidden', !data.answered);
+		postEl.find('[component="post/not-answered"]').toggleClass('hidden', !data.notAnswered);
 		const markAnsweredBtn = postEl.find('[component="post/mark-answered"]');
 		const markUnansweredBtn = postEl.find('[component="post/mark-unanswered"]');
 		markAnsweredBtn.toggleClass('hidden', !!data.answered).parent().attr('hidden', data.answered ? '' : null);
