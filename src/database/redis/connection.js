@@ -61,7 +61,41 @@ connection.connect = async function (options) {
 
 		cxn.connect().then(() => {
 			// back-compat with node_redis
-			cxn.batch = cxn.multi;
+			const _multi = cxn.multi.bind(cxn);
+			cxn.batch = cxn.multi = function (cmds) {
+				const pipeline = _multi();
+				// Old API: multi([['command', ...args], ...])
+				// Translates old lowercase/changed commands to redis v5 API
+				if (Array.isArray(cmds)) {
+					for (const [cmd, ...args] of cmds) {
+						const upperCmd = cmd.toUpperCase();
+						if (upperCmd === 'ZADD') {
+							// Old: zadd key score member → New: ZADD key {score, value}
+							pipeline.ZADD(args[0], { score: Number(args[1]), value: String(args[2]) });
+						} else if (upperCmd === 'ZINTERSTORE' || upperCmd === 'ZUNIONSTORE') {
+							// Old: zinterstore dest numkeys key1 key2 → New: ZINTERSTORE dest [key1, key2]
+							pipeline[upperCmd](args[0], args.slice(2, 2 + Number(args[1])));
+						} else if (upperCmd === 'ZREVRANGE') {
+							// Removed in redis v4+; replaced by ZRANGE with REV option
+							pipeline.ZRANGE(args[0], args[1], args[2], { REV: true });
+						} else if (typeof pipeline[upperCmd] === 'function') {
+							pipeline[upperCmd](...args);
+						}
+					}
+				}
+				// Add lowercase aliases for old-style chained usage (e.g. multi().zrem(...))
+				pipeline.zrem = (...args) => pipeline.ZREM(...args);
+				// Make exec() accept an optional callback
+				const _exec = pipeline.exec.bind(pipeline);
+				pipeline.exec = function (callback) {
+					if (typeof callback === 'function') {
+						_exec().then(r => callback(null, r)).catch(callback);
+					} else {
+						return _exec();
+					}
+				};
+				return pipeline;
+			};
 			//winston.info('Connected to Redis successfully');
 			resolve(cxn);
 		}).catch((err) => {

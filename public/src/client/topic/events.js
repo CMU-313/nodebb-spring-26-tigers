@@ -34,6 +34,11 @@ define('forum/topic/events', [
 		'event:topic_answered': threadTools.setAnsweredState,
 		'event:topic_unanswered': threadTools.setAnsweredState,
 
+		'event:post_marked_question': postTools.setPostQuestionState,
+		'event:post_unmarked_question': postTools.setPostQuestionState,
+		'event:post_answered': postTools.setPostAnsweredState,
+		'event:post_unanswered': postTools.setPostAnsweredState,
+
 		'event:topic_moved': onTopicMoved,
 
 		'event:post_edited': onPostEdited,

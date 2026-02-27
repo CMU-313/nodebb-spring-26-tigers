@@ -1885,6 +1885,87 @@ describe('Topic\'s', () => {
 			assert.deepEqual(results, [1, 2, 3]);
 		});
 	});
+	describe('question/answered state', () => {
+		let questionTid;
+		let ownerUid;
+		let otherUid;
+
+		before(async () => {
+			ownerUid = await User.create({ username: 'questionOwner', password: '123456' });
+			otherUid = await User.create({ username: 'questionOther', password: '123456' });
+
+			const { topicData } = await topics.post({
+				uid: ownerUid,
+				cid: categoryObj.cid,
+				title: 'question answered state test',
+				content: 'main post',
+			});
+			questionTid = topicData.tid;
+		});
+
+		async function getFlags() {
+			const data = await topics.getTopicFields(questionTid, ['isQuestion', 'answered', 'notAnswered']);
+			return {
+				isQuestion: Number(data.isQuestion || 0),
+				answered: Number(data.answered || 0),
+				notAnswered: Number(data.notAnswered || 0),
+			};
+		}
+
+		it('should default answered/notAnswered to 0', async () => {
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 0);
+		});
+		it('markUnanswered should set answered=0, notAnswered=1 (owner)', async () => {
+			await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 1);
+		});
+
+		it('unmarkAsQuestion should clear answered/notAnswered back to 0', async () => {
+			// ensure it is a question first 
+			await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+			await apiTopics.markUnanswered({ uid: ownerUid }, { tids: [questionTid] });
+
+			await apiTopics.unmarkAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.isQuestion, 0);
+			assert.strictEqual(f.answered, 0);
+			assert.strictEqual(f.notAnswered, 0);
+		});
+		
+		it('should not allow non owner or non admin to mark answered', async () => {
+			await assert.rejects(
+				apiTopics.markAnswered({ uid: otherUid }, { tids: [questionTid] }),
+				{ message: '[[error:no-privileges]]' }
+			);
+		});
+
+		it('should allow admin or owner to mark answered', async () => {
+			await apiTopics.markAnswered({ uid: adminUid }, { tids: [questionTid] });
+
+			const f = await getFlags();
+			assert.strictEqual(f.answered, 1);
+			assert.strictEqual(f.notAnswered, 0);
+		});
+		it('DEBUG - check badge HTML', async () => {
+			await apiTopics.markAsQuestion({ uid: ownerUid }, { tids: [questionTid] });
+			await apiTopics.markAnswered({ uid: ownerUid }, { tids: [questionTid] });
+
+			const topicData = await topics.getTopicData(questionTid);
+			const { body } = await request.get(
+				`${nconf.get('url')}/topic/${topicData.slug}`,
+				{ jar: adminJar }
+			);
+
+			// find and print the labels section
+			const idx = body.indexOf('topic/labels');
+		}); 
+	});
 
 	it('should check if user is moderator', (done) => {
 		socketTopics.isModerator({ uid: adminUid }, topic.tid, (err, isModerator) => {

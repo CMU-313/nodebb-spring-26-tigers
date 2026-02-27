@@ -50,6 +50,7 @@
 	"deleted": "Deleted",
 	"question": "Question",
 	"answered": "Answered",
+	"not-answered": "Not Answered",
 	"moved": "Moved",
 	"moved-from": "Moved from %1",
 	"copy-code": "Copy Code",

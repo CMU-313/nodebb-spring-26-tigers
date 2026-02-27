@@ -52,7 +52,7 @@ module.exports = function (Topics) {
 	}
 
 	async function getSearchTids(tid, title, cid, cutoff) {
-		let { ids: tids } = await plugins.hooks.fire('filter:search.query', {
+		let { ids: tids = [] } = await plugins.hooks.fire('filter:search.query', {
 			index: 'topic',
 			content: title,
 			matchWords: 'any',

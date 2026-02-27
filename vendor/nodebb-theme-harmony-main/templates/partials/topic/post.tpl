@@ -80,6 +80,17 @@
 			</div>
 		</div>
 
+		<div component="post/badges" class="d-flex gap-2 mb-1 {{{ if (!posts.isQuestion && (!posts.answered && !posts.notAnswered)) }}}hidden{{{ end }}}">
+			<span component="post/question" class="badge border border-primary text-primary {{{ if !posts.isQuestion }}}hidden{{{ end }}}">
+				<i class="fa fa-question-circle"></i> [[topic:question]]
+			</span>
+			<span component="post/answered" class="badge border border-success text-success {{{ if !posts.answered }}}hidden{{{ end }}}">
+				<i class="fa fa-check-circle"></i> [[topic:answered]]
+			</span>
+			<span component="post/not-answered" class="badge border border-danger text-danger {{{ if !posts.notAnswered }}}hidden{{{ end }}}">
+				<i class="fa fa-times-circle"></i> [[topic:not-answered]]
+			</span>
+		</div>
 		<div class="content text-break" component="post/content" itemprop="text">
 			{posts.content}
 		</div>

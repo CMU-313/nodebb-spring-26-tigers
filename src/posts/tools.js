@@ -66,9 +66,10 @@ module.exports = function (Posts) {
 			Posts.setPostField(pid, 'isQuestion', isQuestion ? 1 : 0),
 		];
 
-		// When unmarking as question, also clear answered status
+		// When unmarking as question, also clear answered/notAnswered status
 		if (!isQuestion) {
 			promises.push(Posts.setPostField(pid, 'answered', 0));
+			promises.push(Posts.setPostField(pid, 'notAnswered', 0));
 		}
 
 		await Promise.all(promises);
@@ -76,6 +77,7 @@ module.exports = function (Posts) {
 		postData.isQuestion = isQuestion;
 		if (!isQuestion) {
 			postData.answered = 0;
+			postData.notAnswered = 0;
 		}
 
 		plugins.hooks.fire('action:post.question', { post: postData, uid });
@@ -101,8 +103,12 @@ module.exports = function (Posts) {
 			throw new Error(canEdit.message);
 		}
 
-		await Posts.setPostField(pid, 'answered', answered ? 1 : 0);
+		await Promise.all([
+			Posts.setPostField(pid, 'answered', answered ? 1 : 0),
+			Posts.setPostField(pid, 'notAnswered', answered ? 0 : 1),
+		]);
 		postData.answered = answered;
+		postData.notAnswered = !answered;
 
 		plugins.hooks.fire('action:post.answered', { post: postData, uid });
 		return postData;

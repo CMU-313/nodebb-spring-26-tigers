@@ -188,6 +188,9 @@ PostDataObject:
         answered:
           type: number
           description: Whether or not the parent topic has been answered (0 or 1)
+        notAnswered:
+          type: number
+          description: Whether or not this post has been explicitly marked as not answered (0 or 1)
         bookmarks:
           type: number
         deleterUid:

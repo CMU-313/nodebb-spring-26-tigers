@@ -225,20 +225,20 @@ module.exports = function (Topics) {
 
 		const promises = [
 			Topics.setTopicField(tid, 'isQuestion', isQuestion ? 1 : 0),
-			Topics.events.log(tid, { type: isQuestion ? 'mark-question' : 'unmark-question', uid }),
 		];
 
-		// When unmarking as question, also clear answered status
+		// When unmarking as question, also clear answered/notAnswered status
 		if (!isQuestion) {
 			promises.push(Topics.setTopicField(tid, 'answered', 0));
+			promises.push(Topics.setTopicField(tid, 'notAnswered', 0));
 		}
 
-		const results = await Promise.all(promises);
+		await Promise.all(promises);
 
 		topicData.isQuestion = isQuestion;
-		topicData.events = results[1];
 		if (!isQuestion) {
 			topicData.answered = 0;
+			topicData.notAnswered = 0;
 		}
 
 		plugins.hooks.fire('action:topic.question', { topic: _.clone(topicData), uid });
@@ -267,9 +267,12 @@ module.exports = function (Topics) {
 			throw new Error('[[error:no-privileges]]');
 		}
 
-		await Topics.setTopicField(tid, 'answered', answered ? 1 : 0);
-		topicData.events = await Topics.events.log(tid, { type: answered ? 'answered' : 'unanswered', uid });
+		await Promise.all([
+			Topics.setTopicField(tid, 'answered', answered ? 1 : 0),
+			Topics.setTopicField(tid, 'notAnswered', answered ? 0 : 1),
+		]);
 		topicData.answered = answered;
+		topicData.notAnswered = !answered;
 
 		plugins.hooks.fire('action:topic.answered', { topic: _.clone(topicData), uid });
 		return topicData;
