@@ -2493,7 +2493,10 @@ describe('Topic\'s', () => {
 	});
 
 	describe('anonymous', () => {
-		it('should correctly attach anonymous field to topic object upon creation', (done) => {
+		let newTopic;
+
+		it('should correctly attach anonymous field to topic object upon topic post', (done) => {
+			
 			topics.post({
 				uid: topic.userId,
 				title: topic.title,
@@ -2503,7 +2506,19 @@ describe('Topic\'s', () => {
 			}, (err, result) => {
 				assert.ifError(err);
 				assert(result.topicData.anonymous == 'true');
+				assert(result.topicData.mainPost.anonymous == 'true');
+				assert(result.postData.anonymous == 'true');
 				topic.tid = result.topicData.tid;
+				newTopic = result.topicData;
+				done();
+			});
+		});
+
+		it('should correctly attach anonymous field to topic object upon topic reply', (done) => {
+			topics.reply({ uid: topic.userId, content: 'test post', tid: newTopic.tid, anonymous: 'true'}, (err, result) => {
+				assert.equal(err, null, 'was created with error');
+				assert.ok(result);
+				assert(result.anonymous == 'true');
 				done();
 			});
 		});
