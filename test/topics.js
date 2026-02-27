@@ -1964,7 +1964,6 @@ describe('Topic\'s', () => {
 
 			// find and print the labels section
 			const idx = body.indexOf('topic/labels');
-			console.log(body.substring(idx, idx + 1500));
 		}); 
 	});
 
