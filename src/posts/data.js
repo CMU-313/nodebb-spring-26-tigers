@@ -17,7 +17,7 @@ module.exports = function (Posts) {
 			return [];
 		}
 		const keys = pids.map(pid => `post:${pid}`);
-		if (fields.length) {
+		if (fields.includes('uid')) {
 			fields.push('anonymous');
 		}
 		const postData = await db.getObjects(keys, fields);
