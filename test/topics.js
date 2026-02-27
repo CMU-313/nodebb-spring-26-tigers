@@ -2496,7 +2496,6 @@ describe('Topic\'s', () => {
 		let newTopic;
 
 		it('should correctly attach anonymous field to topic object upon topic post', (done) => {
-			
 			topics.post({
 				uid: topic.userId,
 				title: topic.title,
@@ -2521,6 +2520,16 @@ describe('Topic\'s', () => {
 				assert(result.anonymous == 'true');
 				done();
 			});
+		});
+
+		it('should return anonymous field', async () => {
+			const result = await topics.getTopicsFields([newTopic.tid], []);
+			assert(result[0].anonymous == 'true');
+		});
+
+		it('should return anonymous field if requesting uid', async () => {
+			const result = await topics.getTopicsFields([newTopic.tid], ['uid']);
+			assert(result[0].anonymous == 'true');
 		});
 	});
 });
