@@ -2572,6 +2572,47 @@ describe('Topic\'s', () => {
 			assert(score < Date.now(), 'Post in cid:<cid>:pids has wrong score, it should not be in the future');
 		});
 	});
+
+	describe('anonymous', () => {
+		let newTopic;
+
+		it('should correctly attach anonymous field to topic object upon topic post', (done) => {
+			topics.post({
+				uid: topic.userId,
+				title: topic.title,
+				content: topic.content,
+				cid: topic.categoryId,
+				anonymous: 'true',
+			}, (err, result) => {
+				assert.ifError(err);
+				assert(result.topicData.anonymous == 'true');
+				assert(result.topicData.mainPost.anonymous == 'true');
+				assert(result.postData.anonymous == 'true');
+				topic.tid = result.topicData.tid;
+				newTopic = result.topicData;
+				done();
+			});
+		});
+
+		it('should correctly attach anonymous field to topic object upon topic reply', (done) => {
+			topics.reply({ uid: topic.userId, content: 'test post', tid: newTopic.tid, anonymous: 'true'}, (err, result) => {
+				assert.equal(err, null, 'was created with error');
+				assert.ok(result);
+				assert(result.anonymous == 'true');
+				done();
+			});
+		});
+
+		it('should return anonymous field', async () => {
+			const result = await topics.getTopicsFields([newTopic.tid], []);
+			assert(result[0].anonymous == 'true');
+		});
+
+		it('should return anonymous field if requesting uid', async () => {
+			const result = await topics.getTopicsFields([newTopic.tid], ['uid']);
+			assert(result[0].anonymous == 'true');
+		});
+	});
 });
 
 describe('Topics\'', async () => {

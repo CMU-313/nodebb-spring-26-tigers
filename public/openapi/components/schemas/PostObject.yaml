@@ -74,58 +74,70 @@ PostObject:
             icon
           example: "#f44336"
     topic:
-      type: object
-      properties:
-        uid:
-          type: number
-          description: A user identifier
-        tid:
-          type: number
-          description: A topic identifier
-        title:
-          type: string
-        cid:
-          type: number
-          description: A category identifier
-        slug:
-          type: string
-        deleted:
-          type: number
-        scheduled:
-          type: number
-        timestamp:
-          type: number
-        timestampISO:
-          type: string
-          description: An ISO 8601 formatted date string (complementing `timestamp`)
-        postcount:
-          type: number
-        mainPid:
-          type: number
-          description: The post id of the first post in this topic (also called the
-            "original post")
-        teaserPid:
-          type: number
-          description: The post id of the teaser (the most recent post, depending on settings)
-          nullable: true
-        titleRaw:
-          type: string
-        oldTitle:
-          type: string
-        isMainPost:
-          type: boolean
-        renamed:
-          type: boolean
-        tags:
-          type: array
-          items:
-            $ref: ../../components/schemas/TagObject.yaml#/TagObject
-      required:
-        - uid
-        - tid
-        - cid
-        - title
-        - slug
+      allOf:
+      - type: object
+        properties:
+          uid:
+            type: number
+            description: A user identifier
+          tid:
+            type: number
+            description: A topic identifier
+          title:
+            type: string
+          cid:
+            type: number
+            description: A category identifier
+          slug:
+            type: string
+          deleted:
+            type: number
+          scheduled:
+            type: number
+          timestamp:
+            type: number
+          timestampISO:
+            type: string
+            description: An ISO 8601 formatted date string (complementing `timestamp`)
+          postcount:
+            type: number
+          mainPid:
+            type: number
+            description: The post id of the first post in this topic (also called the
+              "original post")
+          teaserPid:
+            type: number
+            description: The post id of the teaser (the most recent post, depending on settings)
+            nullable: true
+          titleRaw:
+            type: string
+          oldTitle:
+            type: string
+          isMainPost:
+            type: boolean
+          renamed:
+            type: boolean
+          tags:
+            type: array
+            items:
+              $ref: ../../components/schemas/TagObject.yaml#/TagObject
+        required:
+          - uid
+          - tid
+          - cid
+          - title
+          - slug
+      - type: object
+        description: Optional properties that may or may not be present (except for `pid`, which is always present, and is only here as a hack to pass validation)
+        properties:
+          pid:
+            type: number
+            description: A post identifier
+          anonymous:
+            type: string
+            description: A true/false value representing whether the topic is anonymous
+        required: 
+          - pid
     category:
       type: object
       properties:
@@ -392,5 +404,8 @@ PostDataObject:
         sourceContent:
           type: string
           description: The markdown equivalent of a remote post content, as received (or fetched) from the remote site.
+        anonymous:
+            type: string
+            description: A true/false value representing whether the post is anonymous
       required:
         - pid

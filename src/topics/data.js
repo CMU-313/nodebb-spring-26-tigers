@@ -28,6 +28,10 @@ module.exports = function (Topics) {
 			fields.push('timestamp');
 		}
 
+		if (fields.includes('uid')) {
+			fields.push('anonymous');
+		}
+
 		const keys = tids.map(tid => `topic:${tid}`);
 		const topics = await db.getObjects(keys, fields);
 		const result = await plugins.hooks.fire('filter:topic.getFields', {

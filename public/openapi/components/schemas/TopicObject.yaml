@@ -196,6 +196,9 @@ TopicObject:
           description: "`pinExpiry` rendered as an ISO 8601 format"
         index:
           type: number
+        anonymous:
+          type: string
+          description: A true/false value representing whether the topic is anonymous
       required:
         - tid
 TopicObjectSlim:
@@ -303,5 +306,8 @@ TopicObjectSlim:
         numThumbs:
           type: number
           description: The number of thumbnails associated with this topic
+        anonymous:
+          type: string
+          description: A true/false value representing whether the post is anonymous
       required:
         - tid

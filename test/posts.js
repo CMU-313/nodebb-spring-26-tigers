@@ -1259,6 +1259,30 @@ describe('Post\'s', () => {
 			});
 		});
 	});
+
+	describe('anonymous', () => {
+		let anonPostData;
+
+		before(async () => {
+			({postData: anonPostData} = await topics.post({
+				uid: 1,
+				title: 'Test topic',
+				content: 'test topic',
+				cid: cid,
+				anonymous: 'true',
+			}));
+		});
+
+		it('should return anonymous field', async () => {
+			const result = await posts.getPostsFields([anonPostData.pid], []);
+			assert(result[0].anonymous == 'true');
+		});
+
+		it('should return anonymous field if requesting uid', async () => {
+			const result = await posts.getPostsFields([anonPostData.pid], ['uid']);
+			assert(result[0].anonymous == 'true');
+		});
+	});
 });
 
 describe('Posts\'', async () => {

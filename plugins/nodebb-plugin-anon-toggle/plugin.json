@@ -1,0 +1,21 @@
+{
+    "id": "nodebb-plugin-anon-toggle",
+    "name": "Anon Toggle",
+    "description": "Adds an anonymous toggle to the composer UI and adds anonymous=true/false to the composer payload.",
+    "url": "",
+    "library": "library.js",
+    "staticDirs": {
+        "static": "public"
+    },
+    "hooks": [
+    { "hook": "filter:scripts.get", "method": "addScripts" },
+    { "hook": "filter:post.get", "method": "anonymizePostGet" },
+    { "hook": "filter:post.getPosts", "method": "anonymizePostsGet" },
+    { "hook": "filter:post.getPostSummaryByPids", "method": "anonymizePostsGet" },
+    { "hook": "filter:post.getFields", "method": "anonymizePostsGet" },
+    { "hook": "filter:topic.get", "method": "anonymizeTopicGet" },
+    { "hook": "filter:topics.get", "method": "anonymizeTopicsGet" },
+    { "hook": "filter:topic.getPosts", "method": "anonymizeTopicsGet" },
+    { "hook": "filter:topic.getFields", "method": "anonymizeTopicsGet" }
+    ]
+}
