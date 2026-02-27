@@ -2491,6 +2491,23 @@ describe('Topic\'s', () => {
 			assert(score < Date.now(), 'Post in cid:<cid>:pids has wrong score, it should not be in the future');
 		});
 	});
+
+	describe('anonymous', () => {
+		it('should correctly attach anonymous field to topic object upon creation', (done) => {
+			topics.post({
+				uid: topic.userId,
+				title: topic.title,
+				content: topic.content,
+				cid: topic.categoryId,
+				anonymous: 'true',
+			}, (err, result) => {
+				assert.ifError(err);
+				assert(result.topicData.anonymous == 'true');
+				topic.tid = result.topicData.tid;
+				done();
+			});
+		});
+	});
 });
 
 describe('Topics\'', async () => {
