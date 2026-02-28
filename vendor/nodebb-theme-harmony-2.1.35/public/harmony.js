@@ -5,6 +5,7 @@ $(document).ready(function () {
 	setupNProgress();
 	setupMobileMenu();
 	setupSearch();
+	setupCategoryTopicSearch();
 	setupDrafts();
 	handleMobileNavigator();
 	setupNavTooltips();
@@ -137,6 +138,48 @@ $(document).ready(function () {
 	function setupSearch() {
 		$('[component="sidebar/search"]').on('shown.bs.dropdown', function () {
 			$(this).find('[component="search/fields"] input[name="query"]').trigger('focus');
+		});
+	}
+
+	function setupCategoryTopicSearch() {
+		require(['hooks'], function (hooks) {
+			function filterTopics() {
+				const query = $('#category-topic-search').val().toLowerCase();
+				sessionStorage.setItem('categoryTopicSearch', query);
+
+				$('[component="category/topic"]').each(function () {
+					const $topic = $(this);
+					const title = $topic.find('[component="topic/header"] a').text().toLowerCase();
+					if (title.includes(query)) {
+						$topic.removeClass('hidden');
+					} else {
+						$topic.addClass('hidden');
+					}
+				});
+			}
+
+			hooks.on('action:ajaxify.end', function (data) {
+				const searchInput = $('#category-topic-search');
+				if (searchInput.length) {
+					// Load previous search
+					const previousSearch = sessionStorage.getItem('categoryTopicSearch');
+					if (previousSearch) {
+						searchInput.val(previousSearch);
+						filterTopics();
+					}
+
+					// Listen for input
+					searchInput.on('input', filterTopics);
+				}
+			});
+
+			// Also filter when new topics are loaded via infinite scroll
+			hooks.on('action:topics.loaded', function () {
+				const searchInput = $('#category-topic-search');
+				if (searchInput.length && searchInput.val()) {
+					filterTopics();
+				}
+			});
 		});
 	}
 
