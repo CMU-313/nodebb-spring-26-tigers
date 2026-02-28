@@ -36,6 +36,9 @@
 			</div>
 
 			<div class="d-flex gap-1 align-items-center">
+				<div class="input-group input-group-sm">
+					<input type="text" id="category-topic-search" class="form-control form-control-sm" placeholder="[[global:search]]..." aria-label="[[global:search]]">
+				</div>
 				{{{ if (template.category || template.world) }}}
 					{{{ if privileges.topics:create }}}
 					<a href="{config.relative_path}/compose?cid={cid}" component="category/post" id="new_topic" class="btn btn-primary btn-sm text-nowrap" data-ajaxify="false" role="button">[[category:new-topic-button]]</a>
