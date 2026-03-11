@@ -1,0 +1,15 @@
+{
+  "node": true,
+  "jquery": true,
+  "browser": true,
+  "esversion": 11,
+  "mocha": true,
+  "globals": {
+    "config": true,
+    "ajaxify": true,
+    "define": true,
+    "app": true,
+    "utils": true,
+    "socket": true
+  }
+}
