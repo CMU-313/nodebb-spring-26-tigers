@@ -39,4 +39,4 @@ jobs:
           useLockFile: false
 
       - name: Run JShint
-      - run: ./node_modules/.bin/jshint . 
+        run: ./node_modules/.bin/jshint . 
