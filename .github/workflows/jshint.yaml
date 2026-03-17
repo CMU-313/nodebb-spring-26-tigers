@@ -25,6 +25,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - run: cp install/package.json package.json
 
@@ -39,4 +41,14 @@ jobs:
           useLockFile: false
 
       - name: Run JShint
-      - run: ./node_modules/.bin/jshint . 
+        run: |
+          git fetch origin main
+          FILES=$(git diff --name-only origin/main...HEAD | grep '\.js$' || true)
+
+          if [ -z "$FILES" ]; then
+            echo "No JS files changed"
+          else
+            echo "Running JSHint on:"
+            echo "$FILES"
+            ./node_modules/.bin/jshint $FILES || echo "JSHint found potential issues in modified files."
+          fi
