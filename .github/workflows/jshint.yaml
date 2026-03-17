@@ -50,5 +50,5 @@ jobs:
           else
             echo "Running JSHint on:"
             echo "$FILES"
-            ./node_modules/.bin/jshint $FILES || echo "JSHint found potential issues. You may want to review them"
+            ./node_modules/.bin/jshint $FILES || echo "JSHint found potential issues in modified files."
           fi
