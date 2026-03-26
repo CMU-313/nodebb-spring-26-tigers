@@ -1,17 +1,19 @@
 
 /* eslint-disable strict */
-//var request = require('request');
 
 const translatorApi = module.exports;
 
-translatorApi.translate = function (postData) {
-	return ['is_english',postData];
-};
+const TRANSLATOR_API = process.env.TRANSLATOR_API || 'http://localhost:5000';
 
-// translatorApi.translate = async function (postData) {
-//  Edit the translator URL below
-//  const TRANSLATOR_API = "TODO"
-//  const response = await fetch(TRANSLATOR_API+'/?content='+postData.content);
-//  const data = await response.json();
-//  return ['is_english','translated_content'];
-// };
+translatorApi.translate = async function (postData) {
+	try {
+		const response = await fetch(
+			`${TRANSLATOR_API}/?content=${encodeURIComponent(postData.content)}`
+		);
+		const data = await response.json();
+		return [data.is_english, data.translated_content];
+	} catch (err) {
+		console.error('[translator] Error calling translator service:', err.message, err.constructor.name);
+		return [true, postData.content];
+	}
+};
