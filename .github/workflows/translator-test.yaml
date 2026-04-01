@@ -27,14 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Navigate to translator
-        run: cd translator
-
       - name: Install uv
         uses: astral-sh/setup-uv@v7
       
       - name: Install dependencies
+        working-directory: ./translator
         run: uv sync
 
       - name: Run tests
-        run: uv run pytest translator/
+        working-directory: ./translator
+        run: uv run pytest
