@@ -1,0 +1,39 @@
+name: Translator tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  translator-tests :
+    name: python
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+      
+      - name: Install dependencies
+        working-directory: ./translator
+        run: uv sync
+
+      - name: Run tests
+        working-directory: ./translator
+        run: uv run pytest
