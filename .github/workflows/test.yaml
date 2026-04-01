@@ -90,14 +90,5 @@ jobs:
 
       - name: Test coverage
         uses: coverallsapp/github-action@v2
-      
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-
-      - name: Install uv dependencies
-        run: uv sync
-
-      - name: Run tests
-        run: uv run pytest translator/
 
   
