@@ -12,7 +12,7 @@ services:
       - ./install/docker/setup.json:/usr/src/app/setup.json
 
   translator-service:
-    image: ../'translator-service'
+    image: 'translation-service'
     restart: unless-stopped
     ports:
       - '5000:5000'
