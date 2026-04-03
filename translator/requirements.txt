@@ -1,4 +1,0 @@
-flask
-ollama
-pytest
-pytest-mock
