@@ -4,7 +4,7 @@
 
 const translatorApi = module.exports;
 
-const TRANSLATOR_API = 'http://17313-team12.s3d.cmu.edu:5000/';
+const TRANSLATOR_API = 'http://17313-team12.s3d.cmu.edu:5000';
 
 translatorApi.translate = async function (postData) {
 	try {
