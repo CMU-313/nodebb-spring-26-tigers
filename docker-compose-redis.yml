@@ -14,7 +14,7 @@ services:
       - nodebb-config:/opt/config
       - ./install/docker/setup.json:/usr/src/app/setup.json
 
-  translator-service:
+  translation-service:
     image: 'translation-service'
     restart: unless-stopped
     ports:
