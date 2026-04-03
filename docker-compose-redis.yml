@@ -20,6 +20,15 @@ services:
     ports:
       - '5000:5000'
 
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    restart: unless-stopped
+
   redis:
     image: redis:8.4.0-alpine
     restart: unless-stopped
@@ -56,3 +65,5 @@ volumes:
       o: bind
       type: none
       device: ./.docker/config
+  
+  ollama:
