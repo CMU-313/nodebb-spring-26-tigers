@@ -11,6 +11,12 @@ services:
       - nodebb-config:/opt/config
       - ./install/docker/setup.json:/usr/src/app/setup.json
 
+  translator-service:
+    image: ../'translator-service'
+    restart: unless-stopped
+    ports:
+      - '5000:5000'
+
   mongo:
     image: 'mongo:7-jammy'
     restart: unless-stopped
