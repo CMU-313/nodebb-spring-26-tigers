@@ -78,5 +78,3 @@ test.sh
 dump.rdb
 .archiver_shadow/
 .snapshots/
-
-*.pyc
